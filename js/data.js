@@ -41,45 +41,62 @@ const PROJECTS = [
     maturity: "shipped & adopted",
     pos: 0.05,
     accent: "#f0532e",
-    preview: "A live 3D globe of a Web3 startup's node network. Shipped, and adopted by the startup it tracks.",
+    preview: "A live 3D globe of a Web3 startup's node network. Vibe-coded on a shoestring, and the startup adopted it anyway.",
     links: [{ label: "live demo", href: "https://globe.wirwp.net", ext: true }],
     problem:
-      "A Web3 startup needed to see its node network the way operators actually think about it: who is online, " +
-      "where they are, and how coverage is spreading across the world. The data existed but sat in tables nobody " +
-      "opened. I built a live 3D globe that makes roughly 326k IP ranges and 300+ operators legible at a glance, " +
-      "and about 800 people a month check it.",
+      "I was one of the first 100 operators on this Web3 network, and the first in Malaysia. Before this, seeing the " +
+      "network meant reading raw JSON straight off the nodes: a wall of IDs, IP addresses, ports, and statuses like " +
+      "Ready and Observing. Checking your own node meant fishing it out of that blob by hand. So I built a live 3D " +
+      "globe instead, on top of an open-source library called globe.gl, with a crawler behind it that finds every " +
+      "node and works out where it physically sits. It plots 300+ operators on a spinning Earth, and about 800 " +
+      "people a month come look. The startup team started using screenshots directly in their marketing, and the " +
+      "CEO reached out to say thanks.",
     decisions: [
       {
-        choice: "Vibe-code it, and match the rigor to the stakes",
-        alt: "a hand-engineered build with a backend, tests, and hardening",
+        choice: "Vibe-code it on a shoestring instead of engineering it like a product",
+        alt: "tests, a security pass, and clean architecture from day one",
         why:
-          "A monitoring view a startup might iterate on or drop does not need the rigor a payments app does. I built " +
-          "it fast on about $250 of credits with a cheap model, got something useful in front of people, and it got " +
-          "adopted. For these stakes, that was the right level.",
+          "Nothing critical rides on a node monitor, so it didn't need payments-app rigor. I built it with Claude " +
+          "Code on $250 of free credits. To make them last, I stayed on Sonnet instead of the pricier Opus and " +
+          "scoped each session to a batch of features I could finish.",
       },
       {
-        choice: "Show the data on a globe, not in a dashboard",
-        alt: "tables, charts, a metrics panel",
+        choice: "Crawl the whole network, not just the startup's seed nodes",
+        alt: "read the seed nodes and call it a day, like most monitors",
         why:
-          "Operators think geographically, so coverage and the gaps in it read instantly on a map in a way they never " +
-          "did in a spreadsheet. The glanceable view is why people actually open it.",
+          "I had the backend visit every node it found, then ask that node who its neighbors were, and on and on " +
+          "until nothing new turned up. That drew a fuller map than the seed nodes alone, and it geolocates " +
+          "each node by IP against a database of roughly 326,000 ranges. The full picture also shows how many peers " +
+          "can actually see each node, so the isolated ones stick out.",
       },
       {
-        choice: "Stop at 'works and adopted', and say so",
-        alt: "keep piling features onto the vibe-coded base",
+        choice: "Pour most of the work into how it feels, not into more features",
+        alt: "ship more features, rougher",
         why:
-          "It does its job, but the foundation is loose. I would refactor the core before adding anything load-bearing. " +
-          "Knowing when to stop building is part of the judgment.",
+          "About three-quarters of the time went into the feel: draggable controls, node pop-ups, little animations, " +
+          "filters. I was the entire QA department, clicking every combination and fixing whatever annoyed me. One " +
+          "example: the globe auto-rotates (which you can also toggle off), so nodes kept sliding out from under my " +
+          "cursor before I could click them, so I made it pause whenever you hover one.",
+      },
+      {
+        choice: "Put real rigor into the terms of use, even on a throwaway",
+        alt: "a boilerplate disclaimer, or none",
+        why:
+          "People could make real mining decisions off what the globe showed, so the real risk here was legal, " +
+          "not technical. I drafted the terms and disclaimer with AI, read every line and edited where it mattered, " +
+          "and made the page force you to scroll all the way down before the accept button works.",
       },
     ],
     hardPart:
-      "The hard part of vibe-coding on a tight budget was not getting code, it was knowing where a cheap model would " +
-      "quietly get things wrong. I let it run on the parts I could verify by eye, the globe and the interactions, and " +
-      "checked anything touching data accuracy myself. A monitor that looks right but reports wrong is worse than none.",
+      "The hard part wasn't any single feature. It was holding a real build together across dozens of short agentic " +
+      "sessions. On Sonnet the context window kept filling up and compacting mid-task, so the model would forget " +
+      "what we'd already made. I worked in slices instead: each session, a batch of features small enough to build " +
+      "and hand-test in full before I moved on.",
     next:
-      "It is adopted and stable enough for now. Before I extend it with alerting, history, or per-operator views, I would " +
-      "refactor the vibe-coded core and add tests. Today a bug is cheap. The moment people make decisions on it, the rigor " +
-      "has to rise to meet that.",
+      "It's loose under the hood, and it was the last thing I shipped before stepping back to focus elsewhere, so it " +
+      "sits as-is. If I come back to it, I'd rebuild the core the way I now build anything meant to last: a written " +
+      "spec before any code, layered reviews that go looking for what breaks, and a proper test suite. That's the " +
+      "work that makes it safe to extend with alerting or per-node uptime history.",
     demo: { type: "globe", src: "https://globe.wirwp.net" },
   },
 
@@ -89,51 +106,41 @@ const PROJECTS = [
   {
     id: "badminton",
     name: "badminton",
-    sub: "a match logger I actually use",
+    sub: "a doubles match logger, the first thing I ever vibe-coded",
     maturity: "shipped",
     pos: 0.25,
     accent: "#f5933f",
-    preview: "A badminton match logger I built for myself. localStorage, no backend, shipped.",
+    preview: "A badminton match logger, and the first thing I ever vibe-coded. localStorage, no backend, shipped.",
     links: [
       { label: "live app", href: "https://loongbong.github.io/badminton-match-logger/", ext: true },
       { label: "source", href: "https://github.com/loongbong/badminton-match-logger", ext: true },
     ],
     problem:
-      "I play most weeks and wanted to know who actually wins, not who remembers winning. The apps I tried wanted an " +
-      "account, served ads, and made a server round-trip to log a single game. I built a logger that opens instantly, " +
-      "records a match in a few taps, and keeps the running head-to-head on the device.",
+      "I play doubles most weeks, and I wanted to know who actually wins, not who remembers winning. I also wanted " +
+      "an excuse to finally try vibe-coding. So I built a little logger: tap in your partner, the two opponents, and " +
+      "the score, and it keeps the running record for every team matchup, all in the browser. It was the first thing " +
+      "I ever built this way.",
     decisions: [
       {
-        choice: "Keep everything on the device, no backend",
-        alt: "accounts, a database, a hosted API",
+        choice: "Keep it all in the browser, no backend",
+        alt: "a server, a database, real accounts",
         why:
-          "It is a scorekeeper for a handful of players, not a social network. localStorage means it loads instantly, " +
-          "costs nothing to run, and keeps working offline at the court. These stakes did not justify a server.",
-      },
-      {
-        choice: "Ship one small useful thing, then stop",
-        alt: "tournaments, rankings, multi-sport, a social feed",
-        why:
-          "The whole value is logging a match in seconds and seeing the head-to-head. I built exactly that and left it " +
-          "there. A tool I actually use beats a roadmap I never finish.",
-      },
-      {
-        choice: "Publish the source",
-        alt: "keep it private like the others",
-        why:
-          "This is the one project meant to be read. It is small, clean, and vanilla, so it can stand as the browsable " +
-          "proof that the building is real.",
+          "A backend means paying to host it, and this was a fun weekend project, not a startup. So everything lives " +
+          "in your browser's local storage: it costs nothing to run, loads instantly, and works at the court with no " +
+          "signal.",
       },
     ],
     hardPart:
-      "The fiddly part was the data model. A match is simple, but head-to-head records across players, partners, and " +
-      "sessions tangle fast. I kept one flat list of match records and compute every stat on read, so there is no " +
-      "derived state to keep in sync and nothing to migrate when I add a view. Slower in theory, instant in practice " +
-      "at this scale.",
+      "I built it with Gemini, before I'd ever touched Claude, and the code turned out to be the easy part. The real " +
+      "fight was GitHub. I'd change something, push it, watch it break on the live page, and have no idea why, then " +
+      "go back and forth between the code and the site trying to spot what I'd done. Half the project was just " +
+      "learning how putting a thing online works at all. By the end I had a working app on the internet, which at the " +
+      "time felt like a much bigger win than the badminton.",
     next:
-      "It does its job. If I extended it I would add a real export so the history is not trapped in one browser, and " +
-      "optional sync for people who switch phones. Neither is worth a backend yet. The moment the data has to outlive " +
-      "a device, the rigor has to rise to match.",
+      "The one real limit is that your logs live on a single browser, so they don't follow you to a new phone. There's " +
+      "a JSON export and import to move them by hand, which is the honest workaround for skipping a backend. The day " +
+      "my crew wants one shared history across phones, that's when it earns a real server. For now, it settles who " +
+      "actually won. That was the whole point.",
     demo: {
       type: "badminton",
       src: "https://loongbong.github.io/badminton-match-logger/",
@@ -153,43 +160,48 @@ const PROJECTS = [
     accent: "#e7ddc9",
     preview: "An A/B evaluation of two speech-to-text models, and a designed ensemble to reconcile them.",
     problem:
-      "I needed accurate transcripts of difficult audio: accented, noisy, meeting-room recordings where one wrong span " +
-      "can flip a meaning. No single off-the-shelf model held up on the hard parts. I ran two very different speech " +
-      "models against the same clip to map where each one broke, and whether they broke in the same places.",
+      "I record meetings sometimes and never want to sit through them again to write up notes. So I tried Whisper, " +
+      "the obvious open-source option, and it was solid until it wasn't: on the rough patches it mangled words in " +
+      "ways that quietly changed what someone said. Qwen had just dropped a new speech model, so I ran it on the same " +
+      "audio to compare. They broke in completely different places.",
     decisions: [
       {
-        choice: "Pit two models against each other, not against a leaderboard",
-        alt: "pick the highest-scoring model and move on",
+        choice: "Test two very different models head-to-head, on my own audio",
+        alt: "pick whatever tops a leaderboard and trust it",
         why:
-          "A single accuracy score hides where a model fails. Running two very different models on the same hard audio " +
-          "showed their errors land in different places, which is the whole basis for combining them.",
+          "A single accuracy score hides where a model actually falls apart. Running Whisper and Qwen on the same " +
+          "rough recording showed exactly where each one breaks, and that they break in different spots. That is what " +
+          "a leaderboard never tells you.",
       },
       {
-        choice: "Design the ensemble around complementary failure modes",
-        alt: "average the two outputs, or just trust the higher scorer",
+        choice: "Reconcile the two models instead of crowning a winner",
+        alt: "just ship whichever one scored higher",
         why:
-          "Whisper collapses structurally and loops a phrase on noisy spans. Qwen fails semantically and invents " +
-          "plausible wrong text. Where two different failure modes disagree is where an arbiter actually has signal.",
+          "Whisper collapses in an obvious way: on a bad patch it locks into a loop and repeats a phrase. Qwen fails " +
+          "the opposite way, smoothly inventing plausible words and swapping a name for a brand it knows. Because the " +
+          "two don't fail in the same spots, the places they disagree are exactly where there's signal. The idea is an " +
+          "arbiter that takes the trustworthy reading at each disagreement, or flags it as unclear instead of guessing.",
       },
       {
-        choice: "Run it locally on the hardware I have",
+        choice: "Run everything locally on my own Macs",
         alt: "a cloud transcription API",
         why:
-          "Sensitive audio should not leave the machine. I ran quantized models on Apple Silicon with MLX and staged " +
-          "the heavier passes to a stronger Mac. Privacy and cost both pointed local.",
+          "The audio is sensitive, so I didn't want it leaving my machine. Local costs nothing per hour, and it let " +
+          "me see what these models can really do on consumer hardware. I think that's where this is heading anyway: " +
+          "more of it runs on your own device every year.",
       },
     ],
     hardPart:
-      "The catch is that the two models fail in ways that look nothing alike. Whisper locks into a repetition loop and " +
-      "can lose a sixth of a clip to one repeated phrase. Qwen never loops, but it will calmly invent a sentence over " +
-      "silence and swap a person's name for a brand it recognizes. Averaging them is meaningless. The design instead " +
-      "aligns them by timestamp and, where they disagree, takes the contextually plausible reading or flags the span " +
-      "as unclear rather than guessing.",
+      "The catch is you can't just average two transcripts. Whisper's failure is loud: a repeated phrase you spot in " +
+      "a second. Qwen's is the dangerous kind, a clean confident sentence that's simply wrong, with nothing marking " +
+      "it as off. So an arbiter can't just trust the smoother output, because the smooth one is often the invented " +
+      "one. The design aligns both transcripts in time and leans on the disagreements: where they diverge, take the " +
+      "reading that fits the context, or flag the span as unclear instead of letting a confident guess through.",
     next:
-      "The evaluation is real and the reconciliation logic is drafted, but the arbiter is not built end to end, so I " +
-      "label this a spike and a design, not a product. Next is wiring a small local model as the arbiter and measuring " +
-      "whether reconciled accuracy actually beats the better single model on the hard spans. If it does not, the honest " +
-      "result is that the ensemble is not worth building.",
+      "I ran the evaluation for real, but I stopped at the design. The reconciler is drafted, not built, so this is " +
+      "a spike and a design, not a product. Honestly, I don't record enough meetings to justify finishing it just " +
+      "for me. If I come back to it, it's because the local-only angle makes it worth turning into a small tool other " +
+      "people could actually use.",
     demo: {
       type: "asr",
       reference:
@@ -225,52 +237,50 @@ const PROJECTS = [
     accent: "#8ccff9",
     preview: "A reproducible, auditable archive of Malaysian bond-yield history.",
     problem:
-      "I wanted a clean, queryable history of Malaysian bond yields across maturities, the kind of yield-curve record a " +
-      "public portal publishes one date at a time and never as a dataset. Pulling it by hand is slow, and a single " +
-      "mistyped figure quietly corrupts everything downstream. I built a pipeline that collects it, reshapes it into " +
-      "one tidy table, and proves the result is faithful to the source.",
+      "I had weeks of manual data collection in front of me: Malaysian bond yields from a public central-bank portal " +
+      "(BNM's FAST) that only serves one date at a time, going back years. Clicking and copying it by hand would have " +
+      "taken weeks. I knew enough about Python scrapers to automate it instead, so I built a pipeline with Claude Code " +
+      "that pulls the whole history, reshapes it into one tidy table, and proves every number matches the source page " +
+      "it came from.",
     decisions: [
       {
-        choice: "Write the spec before writing any code",
-        alt: "start scraping and shape the data as I go",
+        choice: "Write a proper spec before any code",
+        alt: "start scraping and figure out the shape as I went",
         why:
-          "An archive is only as good as its definition. I pinned down the exact fields, maturities, and date range " +
-          "first, so the scraper had a target and the output had a contract. Planning caught ambiguities that would " +
-          "have meant re-running everything later.",
+          "Before writing a line, I pinned down exactly what to capture, what a valid page should look like, and what " +
+          "evidence to keep for every date. The scraper had a target and the data had a contract. That caught the " +
+          "awkward cases, missing dates, public holidays, the page layout shifting, before they could quietly poison " +
+          "the dataset.",
       },
       {
-        choice: "Build for audit, not just for output",
-        alt: "a script that prints a CSV and exits",
+        choice: "Make the pipeline prove itself, not just spit out a spreadsheet",
+        alt: "scrape it, dump a CSV, call it done",
         why:
-          "If I cannot prove a number came from the source unchanged, the archive is worthless for anything serious. " +
-          "Every run writes validation logs and a hash manifest, so any row traces back and any silent change is caught.",
+          "A scraper that returns plausible-looking numbers is more dangerous than one that crashes, because nobody " +
+          "notices the quiet corruption. So every run keeps the raw HTML of each page, checks the numbers against what " +
+          "the page should contain, logs anything off, and writes a hash manifest. Any figure in the final table " +
+          "traces straight back to the page it came from.",
       },
       {
-        choice: "Make the backfill resumable and polite",
-        alt: "one long loop that hammers the server and dies halfway",
+        choice: "Scrape gently, and make it resumable",
+        alt: "hammer the portal as fast as it would go",
         why:
-          "Years of daily data is a lot of requests. The scraper backs off, retries, and checkpoints its progress, so a " +
-          "dropped connection resumes instead of restarting, and the public source is never hit harder than a careful " +
-          "human would.",
-      },
-      {
-        choice: "Parse to a long, tidy table",
-        alt: "keep the portal's wide, per-page layout",
-        why:
-          "The source publishes one date per page, laid out for reading rather than analysis. Reshaping to one row per " +
-          "date and maturity makes the whole history filterable and chartable in a line, which is the entire point of " +
-          "having an archive.",
+          "While I was still building this, the portal itself went down for a good half hour, right when I needed the " +
+          "data by the next day. That was enough to make me careful. The scraper waits a couple of seconds between " +
+          "pages, backs off and retries on errors, and checkpoints its progress, so a dropped connection picks up " +
+          "where it left off and the source never gets hit harder than a careful person clicking.",
       },
     ],
     hardPart:
-      "The hard part was trust. A scraper that returns plausible-looking numbers is more dangerous than one that " +
-      "crashes, because nobody notices the quiet corruption. I made the pipeline prove itself: it range-checks every " +
-      "value and type on the way in, hashes each stage's output into a manifest, and logs the page every final row came " +
-      "from. If the source shifts or a parse slips, the run fails loudly instead of saving bad data.",
+      "The portal doesn't hand you its data as plain HTML. It's an old-style government web app that builds the tables " +
+      "with JavaScript after the page loads, so my first scrapers pulled the page and got almost nothing. I tried a " +
+      "few angles, poking at direct URLs and the requests behind the page, before giving up on the lightweight " +
+      "approach and driving a real browser with Playwright instead. It loads the page like a person would, waits for " +
+      "the data to render, then reads it. Slower, but it actually sees what's on the screen.",
     next:
-      "It runs and the output checks out. To make it genuinely hands-off I would put it on a schedule with alerting, so " +
-      "a failed or changed source pings me instead of waiting to be noticed, and publish a small data dictionary so the " +
-      "archive explains itself to anyone but me. The core call, spend the effort on auditability, is the one I would keep.",
+      "It runs, and the numbers check out against the source. To make it genuinely hands-off I'd put it on a schedule " +
+      "with alerting, so the day the portal changes its layout the run fails loudly and pings me instead of quietly " +
+      "drifting. If I extended it, the audit trail is the part I'd never cut.",
     demo: {
       type: "pipeline",
       stages: [
@@ -301,48 +311,63 @@ const PROJECTS = [
     maturity: "built + tested · in redesign",
     pos: 0.95,
     accent: "#55bacc",
-    preview: "A full-stack personality app. Built rigorously, and hardened by a pre-launch security review.",
+    preview: "A full-stack Big Five personality app: login, payments, personal results. The one I engineered properly.",
     problem:
-      "OCEAN Crew turns a Big Five personality result into something people want to look at: a two-minute quiz that " +
-      "renders your traits as a crew of five characters around a radar. It is built to be used by strangers and to " +
-      "handle a login, a payment step, and personal results. That pushes the stakes well past a throwaway prototype, " +
-      "so I engineered it like something that has to be trusted.",
+      "A Big Five personality result is normally five abstract scores: hard to grasp, and nothing you'd want to " +
+      "share. OCEAN Crew turns each trait into a character instead, so your result is a crew of five you can read at " +
+      "a glance and actually want to show people. A two-minute quiz reveals your character; the paid report gives you " +
+      "the full crew, one for each trait, around a radar. It takes a login, a card payment, and people's personal " +
+      "results, so I built it the careful way from the start.",
     decisions: [
       {
-        choice: "Engineer it properly, full stack, from the start",
+        choice: "Engineer it properly from day one, full stack",
         alt: "vibe-code a pretty front end and bolt the rest on later",
         why:
-          "This is the far end of the spectrum from the node globe. A login, payments, and personal data mean the rigor " +
-          "has to be high, so I built it as a real full-stack app, SvelteKit and Hono and PostgreSQL with Stripe, with " +
-          "the validation and structure that implies.",
+          "This is the far end of the spectrum from the globe. A login, real payments, and personal results mean a " +
+          "bug isn't a cosmetic glitch, it's someone's data or money. So I built it as a real full-stack app, with " +
+          "the validation and structure that implies, not a pretty shell I'd have to make safe later.",
       },
       {
-        choice: "Stay validation-first and lean",
+        choice: "Build it to grow, not just to work",
+        alt: "make it work now and deal with the mess when I revisit it",
+        why:
+          "I have a roadmap for this one, so it can't be code that runs fine until you reopen it to add a feature and " +
+          "then breaks in ways nobody planned. That is exactly why the globe needs a refactor before I extend it. So " +
+          "I planned the architecture up front and built it in clean modules, and let scale drive the stack: Svelte " +
+          "and a PostgreSQL backend, with the front end on Cloudflare's CDN so it stays fast as it grows.",
+      },
+      {
+        choice: "Keep the surface lean, but harden anything that touches money or identity",
         alt: "build every feature I could imagine before launch",
         why:
-          "Rigorous does not mean bloated. I kept the surface small and the validation tight: prove the core funnel " +
-          "works and is safe, ship that, and add features only once the foundation holds.",
+          "Rigorous doesn't mean bloated. I deferred the extra tiers, the AI-written reports, the nice-to-haves, and " +
+          "shipped the core funnel. The auth, the input validation, and the Stripe payments got the real treatment " +
+          "instead. The payment path alone has three independent ways to confirm a purchase, so a dropped webhook " +
+          "can't leave a paid-for report undelivered.",
       },
       {
-        choice: "Run a real security review before launch",
+        choice: "Run a real security review before anyone could sign in",
         alt: "launch, then patch what breaks",
         why:
-          "An OWASP-style pass before anyone signs in is cheap. After a breach it is not. The review treated the app as " +
-          "hostile input and went looking for the holes a happy-path build never sees.",
+          "An OWASP-style pass before launch is cheap. After a breach it isn't. I walked the app against the OWASP " +
+          "Top 10 and a public payloads list, treated my own code as hostile input, and went looking for the holes a " +
+          "happy-path build never sees.",
       },
     ],
     hardPart:
-      "The review caught a real one. The login callback decided where to send you after sign-in by checking the " +
-      "destination started with a slash, which looks safe but is not: a value like /\\evil.com slips past that check and " +
-      "the browser redirects off-site, a clean phishing setup right after login. The fix tightened the validation to " +
-      "reject a backslash, an at-sign, or a second slash after the leading one, and stripped the session token at the " +
-      "BFF boundary so it never rides along on a redirect. It was an open-redirect, not a way into anyone's account, " +
-      "but on a login flow it is exactly what a pre-launch review exists to catch.",
+      "The review earned its keep. The login flow decided where to send you after sign-in by checking the " +
+      "destination started with a slash, which looks safe and isn't. A value like /\\evil.com slips past that check, " +
+      "and the browser happily redirects off your site to an attacker's: a clean phishing setup right after someone " +
+      "logs in. The fix was to reject the sneaky cases, a backslash, an at-sign, a second slash, and to strip the " +
+      "session token at the boundary so it can never ride along on a redirect. It was an open-redirect, not a way " +
+      "into anyone's account. But on a login page, that's exactly the kind of thing a pre-launch review exists to catch.",
     next:
-      "It is built and integration-tested but currently offline while I rework the design, so I call it pre-launch " +
-      "and nothing more. Before it goes public I want the security review repeated on the final build, basic abuse " +
-      "monitoring on the auth and payment paths, and a proper load pass. The judgment I am most sure of is that this " +
-      "project earned the heavy treatment, where the node globe did not.",
+      "It's built and tested, but offline right now because I'm redoing the look. When GPT Image 2.0 came out I could " +
+      "see how much better the whole thing could be, and since this is a project I actually care about, I'd rather " +
+      "take the time to get the design right. I'm regenerating the art one piece at a time, down to the backdrop motifs on " +
+      "the share cards, until each one is right. Before it goes live, the security review gets run again on the final " +
+      "build, plus abuse monitoring on the auth and payment paths and a proper load test before it goes anywhere near " +
+      "real cards.",
     demo: {
       type: "ocean",
       crew: "assets/ocean/crew-emma.webp",
