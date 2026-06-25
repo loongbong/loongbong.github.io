@@ -7,18 +7,21 @@
 const SITE = {
   name: "Loong Bong",
   tagline: {
-    lead: "Same tools, very different rigor.",
+    lead: "Same tools, very different rigour.",
     sub: "Vibe-code the prototype, then engineer what people actually use.",
   },
   about:
-    'I\'m Loong Bong. I started in chemical engineering, where a theory I worked out as an undergrad ' +
-    'became a paper in <a href="https://doi.org/10.1039/D0PY01311K" target="_blank" rel="noopener"><em>Polymer Chemistry</em></a> ' +
-    '(cited ~40 times), spent five years as an engineer at PETRONAS, and now work in Strategy &amp; Transactions ' +
-    'at EY-Parthenon. Along the way I started directing AI agents to build the things I needed, and didn\'t stop: ' +
-    'a Web3 node-monitor the startup it tracks adopted, a full-stack personality app a pre-launch security review ' +
-    'hardened, an auditable data pipeline, a model-evaluation spike. <strong>The projects below aren\'t all built ' +
-    'the same way. That\'s deliberate.</strong> I match the rigor to the stakes: vibe-code the throwaway, engineer ' +
-    'the thing people have to trust.',
+    'Hi, I\'m Loong. I trained as a chemical engineer, and a scientific theory I came up with as an undergrad ' +
+    'ended up published in <a href="https://doi.org/10.1039/D0PY01311K" target="_blank" rel="noopener"><em>Polymer Chemistry</em></a>, ' +
+    'cited 40+ times. I spent the next five years as an engineer at PETRONAS, where a Lean Six Sigma Green Belt ' +
+    'taught me how to systematically take a process apart, find where the value flows and blocks, improve on it, ' +
+    'and then make the fix last. Today I\'m in Strategy &amp; Transactions at EY-Parthenon, but outside of work I ' +
+    'direct AI at the stuff I wish existed, and build it. I vibe-coded a live globe of a Web3 startup\'s node ' +
+    'network that the startup adopted, now with 800+ monthly visitors. But for a personality app that\'s an ' +
+    'ongoing passion project of mine, I\'m engineering it properly and carefully, with a full roadmap, highly ' +
+    'detailed specs, and multiple review layers to ensure security (one of which caught a real security hole ' +
+    'before launch). Everyone has the same access to these incredibly powerful AI tools, but having developed ' +
+    'judgement and taste, and knowing how much rigour each thing needs, is the differentiator.',
   rangeLine:
     'Outside the build: 20+ essays on personality psychology, and ' +
     '<a href="https://open.spotify.com/artist/3fAP8piejouPJKFnC5IJlu" target="_blank" rel="noopener">a song that once charted on national radio</a>.',
@@ -56,7 +59,7 @@ const PROJECTS = [
         choice: "Vibe-code it on a shoestring instead of engineering it like a product",
         alt: "tests, a security pass, and clean architecture from day one",
         why:
-          "Nothing critical rides on a node monitor, so it didn't need payments-app rigor. I built it with Claude " +
+          "Nothing critical rides on a node monitor, so it didn't need payments-app rigour. I built it with Claude" +
           "Code on $250 of free credits. To make them last, I stayed on Sonnet instead of the pricier Opus and " +
           "scoped each session to a batch of features I could finish.",
       },
@@ -64,7 +67,7 @@ const PROJECTS = [
         choice: "Crawl the whole network, not just the startup's seed nodes",
         alt: "read the seed nodes and call it a day, like most monitors",
         why:
-          "I had the backend visit every node it found, then ask that node who its neighbors were, and on and on " +
+          "I had the backend visit every node it found, then ask that node who its neighbours were, and on and on" +
           "until nothing new turned up. That drew a fuller map than the seed nodes alone, and it geolocates " +
           "each node by IP against a database of roughly 326,000 ranges. The full picture also shows how many peers " +
           "can actually see each node, so the isolated ones stick out.",
@@ -79,7 +82,7 @@ const PROJECTS = [
           "cursor before I could click them, so I made it pause whenever you hover one.",
       },
       {
-        choice: "Put real rigor into the terms of use, even on a throwaway",
+        choice: "Put real rigour into the terms of use, even on a throwaway",
         alt: "a boilerplate disclaimer, or none",
         why:
           "People could make real mining decisions off what the globe showed, so the real risk here was legal, " +
@@ -210,7 +213,7 @@ const PROJECTS = [
         "Illustrative example. The failure modes are real; the sentence is invented. The original audio stays private.",
       segments: [
         { kind: "name", ref: "Priya", whisper: "Priya", qwen: "Prada", verdict: "Priya",
-          why: "Qwen swapped the name for a brand it recognized. Whisper held it. The arbiter keeps Whisper." },
+          why: "Qwen swapped the name for a brand it recognised. Whisper held it. The arbiter keeps Whisper." },
         { kind: "agree", ref: "will coordinate the shipment to", whisper: "will coordinate the shipment to", qwen: "will coordinate the shipment to", verdict: "will coordinate the shipment to",
           why: "Both models agree, so the shared text passes through untouched." },
         { kind: "code", ref: "terminal KLG-7", whisper: "terminal KLG-7", qwen: "terminal KLD-9", verdict: "terminal KLG-7",
