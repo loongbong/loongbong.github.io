@@ -159,6 +159,8 @@ p { margin: 0; }
 
 /* the Spectrum */
 .spectrum { margin-top: auto; padding-bottom: 0.5rem; }
+.spectrum__cue { text-align: center; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 1.1rem; }
+.spectrum__cue span { color: var(--accent); }
 .spectrum__labels { display: flex; justify-content: space-between; margin-bottom: 1.1rem; }
 .spectrum__label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; }
 .spectrum__label--left { color: var(--warm); }
@@ -448,7 +450,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .traj__axis { font-family: var(--mono); font-size: 10px; fill: var(--text-faint); letter-spacing: 0.06em; }
 
 /* 5 · RIGOR GAUGE (compact — sits in the project hero; needle origin is view-box 110,110) */
-.gauge { width: 172px; flex: 0 0 auto; text-align: center; }
+.gauge { width: 212px; flex: 0 0 auto; text-align: center; }
 .gauge__svg { width: 100%; height: auto; overflow: visible; }
 .gauge__track { fill: none; stroke: var(--line); stroke-width: 10; stroke-linecap: round; }
 .gauge__arc { fill: none; stroke-width: 10; stroke-linecap: round; opacity: 0.92; }
@@ -457,12 +459,12 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .gauge__hub { fill: var(--text); }
 .gauge__mark { fill: var(--gc, var(--accent)); stroke: #fff; stroke-width: 1.5; opacity: 0; filter: drop-shadow(0 0 7px var(--gc, var(--accent))); transition: opacity 0.5s ease 1.5s; }
 .gauge.is-in .gauge__mark { opacity: 1; }
-.gauge__ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.08em; color: var(--text-faint); margin-top: -0.4rem; padding: 0 6%; }
-.gauge__read { font-family: var(--mono); margin-top: 0.15rem; }
-.gauge__num { font-size: 1.15rem; color: var(--text); font-weight: 500; }
+.gauge__ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; color: var(--text-faint); margin-top: -0.4rem; padding: 0 6%; }
+.gauge__read { font-family: var(--mono); margin-top: 0.3rem; }
+.gauge__num { font-size: 1.55rem; color: var(--text); font-weight: 500; }
 .gauge__num .u { color: var(--text-faint); font-size: 0.7em; }
-.gauge__cap { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-top: 0.3rem; }
-@media (max-width: 540px) { .gauge { width: 148px; } }
+.gauge__cap { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-top: 0.35rem; }
+@media (max-width: 540px) { .gauge { width: min(340px, 84vw); margin: 0.5rem auto 0; } .gauge__ends { font-size: 0.82rem; } .gauge__num { font-size: 1.9rem; } .gauge__cap { font-size: 0.8rem; } }
 
 /* instrument reduced-motion: armBeats() settles to final state; kill the tweens so it lands instantly */
 @media (prefers-reduced-motion: reduce) {
@@ -505,6 +507,8 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 }
 .globe-embed__title { color: var(--text-dim); font-size: 0.82rem; letter-spacing: 0.1em; }
 .globe-embed__hint { font-size: 0.72rem; font-family: var(--mono); }
+.globe-note { margin: 0 0 0.8rem; font-size: 0.72rem; line-height: 1.5; color: var(--text-dim); border: 1px solid color-mix(in srgb, var(--warm) 30%, var(--line)); border-left: 2px solid var(--warm); border-radius: 8px; padding: 0.55rem 0.75rem; background: color-mix(in srgb, var(--warm) 6%, var(--bg)); }
+.globe-note b { color: var(--text); font-weight: 500; }
 /* sized at 1/0.55 then scaled to 0.55 => content renders ~55% zoom (wider view), fills the frame */
 .globe-embed__frame {
   position: absolute; top: 0; left: 0;
@@ -582,7 +586,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .seg.is-pick { color: var(--text); background: color-mix(in srgb, var(--accent) 20%, transparent); }
 .seg.is-active { box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 60%, transparent); color: var(--text); }
 .seg:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent); }
-.asr__legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; margin-top: 0.9rem; font-size: 0.68rem; color: var(--text-faint); letter-spacing: 0.03em; }
+.asr__legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; margin: 0 0 0.9rem; font-size: 0.68rem; color: var(--text-faint); letter-spacing: 0.03em; }
 .asr__legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
 .ldot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
 .ldot--structural { background: #ff9b3d; }
@@ -624,7 +628,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 @media (prefers-reduced-motion: reduce) { .pipe__toast { transition: none; } }
 .pipe__controls { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.1rem; }
 .pipe__status { color: var(--text-faint); font-size: 0.72rem; letter-spacing: 0.06em; }
-.pipe { display: flex; align-items: stretch; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.3rem; }
+.pipe { display: flex; align-items: stretch; flex-wrap: nowrap; overflow-x: auto; overflow-y: visible; padding: 6px 2px 0.3rem; }
 .pipe__stage {
   flex: 1 1 0; min-width: 100px; display: flex; flex-direction: column; gap: 0.4rem;
   padding: 0.8rem 0.7rem; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); cursor: pointer;
@@ -651,11 +655,13 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .ychart__xlabel { fill: var(--text-faint); font-family: var(--mono); font-size: 10px; text-anchor: middle; }
 .ychart__unit { fill: var(--text-faint); font-family: var(--mono); font-size: 10px; text-anchor: start; letter-spacing: 0.06em; }
 .ychart__line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ychart__dot { transition: opacity 0.25s ease; }
 .ychart__legline { stroke-width: 2; }
 .ychart__leg { fill: var(--text-dim); font-family: var(--mono); font-size: 10px; }
 @media (prefers-reduced-motion: no-preference) {
   .ychart__line { stroke-dasharray: 1; stroke-dashoffset: 1; }
   .demo.is-in .ychart__line { animation: ydraw 1.2s var(--ease) forwards; }
+  .ychart.is-run .ychart__line { animation: none; }
 }
 @keyframes ydraw { to { stroke-dashoffset: 0; } }
 
@@ -758,7 +764,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 
 /* bio + typewriter */
 .bio { margin-top: clamp(2.5rem, 6vh, 3.5rem); }
-.bio__text { font-size: 1.18rem; line-height: 1.74; color: var(--text-dim); max-width: 64ch; min-height: 1px; }
+.bio__text { font-size: 1.18rem; line-height: 1.74; color: var(--text-dim); max-width: 64ch; min-height: 1px; contain: layout; }
 .bio__text strong { color: var(--text); font-weight: 500; }
 .bio__text .flow { color: var(--focus); font-weight: 500; }
 .bio__text a { color: var(--warm-2); border-bottom: 1px solid transparent; transition: border-color 0.15s; }
@@ -789,11 +795,22 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
    Colophon footer (honest instrument readout)
    ========================================================================= */
 .colophon {
-  border-top: 1px solid var(--line); padding: 2rem var(--gutter);
+  border-top: 1px solid var(--line); padding: clamp(3rem, 7vh, 5rem) var(--gutter) 3rem;
   max-width: var(--maxw); margin-inline: auto;
-  display: flex; flex-wrap: wrap; gap: 1rem 2rem; justify-content: space-between;
-  font-family: var(--mono); font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.05em;
 }
+.colophon__cta {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 1.3rem 2.5rem; padding-bottom: 2rem; margin-bottom: 1.6rem; border-bottom: 1px solid var(--line-soft);
+}
+.colophon__line { font-size: 1.05rem; line-height: 1.55; color: var(--text-dim); max-width: 44ch; margin: 0; }
+.colophon__links { display: flex; flex-wrap: wrap; gap: 1.3rem; }
+.colophon__links a {
+  font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em; color: var(--text);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); padding-bottom: 2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.colophon__links a:hover { color: var(--accent); border-color: var(--accent); }
+.colophon__meta { display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; font-family: var(--mono); font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.05em; }
 
 /* =========================================================================
    Motion — entrance + scroll-reveal. All gated by prefers-reduced-motion.
@@ -856,6 +873,12 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .embed--phone { aspect-ratio: auto; height: 720px; border-radius: 30px; border: 1px solid var(--line); background: var(--bg); }
 .embed--phone .embed__frame, .embed--phone .embed__poster { border-radius: 30px; }
 @media (max-width: 480px) { .phone { padding: 9px; border-radius: 32px; } .embed--phone { height: 600px; border-radius: 24px; } .embed--phone .embed__frame, .embed--phone .embed__poster { border-radius: 24px; } }
+.phone__shot { display: block; width: 100%; height: auto; border-radius: 28px; }
+
+/* OCEAN — two live mobile screenshots in phone frames */
+.ocean__phones { display: flex; flex-wrap: wrap; gap: clamp(1rem, 3vw, 2.2rem); justify-content: center; align-items: flex-start; margin-bottom: 1.2rem; }
+.ocean__phone { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0.7rem; max-width: 100%; }
+.ocean__phone .demo-caption { max-width: 360px; text-align: center; margin: 0; }
 
 /* browser frame — OCEAN (offline, desktop screenshot) */
 .browser { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--bg-1); }

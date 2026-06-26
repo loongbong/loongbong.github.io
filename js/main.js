@@ -38,19 +38,23 @@ function scrollAffordances() {
   });
   if (!cue || !toTop || !targets.length) return;
 
-  const nextTarget = () => targets.find((t) => t.el.getBoundingClientRect().top > 120) || null;
-  const currentName = () => {
-    let cur = "";
-    targets.forEach((t) => { if (t.el.getBoundingClientRect().top <= 140) cur = t.name; });
-    return cur;
-  };
+  // Cache each target's absolute document offset and recompute only on resize / height
+  // change. The offsetTop chain ignores transforms, so the entrance animation can't skew
+  // it. Reading layout (getBoundingClientRect) on every scroll frame forced a synchronous
+  // reflow that fought the typewriter's per-character DOM writes — the About-scroll jitter.
+  let tops = [];
+  const absTop = (el) => { let y = 0; for (let n = el; n; n = n.offsetParent) y += n.offsetTop; return y; };
+  const measure = () => { tops = targets.map((t) => absTop(t.el)); };
+
+  const nextTarget = () => { const y = window.scrollY + 120; for (let k = 0; k < targets.length; k++) if (tops[k] > y) return targets[k]; return null; };
 
   const update = () => {
+    const y = window.scrollY;
     const nxt = nextTarget();
-    const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 80;
+    const nearBottom = window.innerHeight + y >= document.body.scrollHeight - 80;
     cue.hidden = !nxt || nearBottom;
-    toTop.hidden = window.scrollY < window.innerHeight * 0.9;
-    if (activeLabel) activeLabel.textContent = currentName();
+    toTop.hidden = y < window.innerHeight * 0.9;
+    if (activeLabel) { let cur = ""; for (let k = 0; k < targets.length; k++) if (tops[k] <= y + 140) cur = targets[k].name; activeLabel.textContent = cur; }
   };
 
   cue.addEventListener("click", () => {
@@ -65,7 +69,9 @@ function scrollAffordances() {
     ticking = true;
     requestAnimationFrame(() => { update(); ticking = false; });
   }, { passive: true });
-  window.addEventListener("resize", update);
+  measure();
+  window.addEventListener("resize", () => { measure(); update(); });
+  if ("ResizeObserver" in window) new ResizeObserver(() => measure()).observe(document.body);
 
   // reveal the cue only after the hero entrance has played ("after the landing animation")
   setTimeout(update, REDUCE ? 0 : 2600);

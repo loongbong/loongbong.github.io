@@ -15,7 +15,8 @@ function demoGlobe(demoEl, project) {
     `<a class="demo__open" href="${src}" target="_blank" rel="noopener">open live ↗</a>`;
 
   body.innerHTML =
-    `<div class="globe-embed">
+    `<div class="globe-note mono"><b>Built for desktop.</b> On a phone, open it on a larger screen for the full 3D globe.</div>
+     <div class="globe-embed">
        <div class="globe-embed__poster">
          <span class="mono globe-embed__title">live 3D node globe</span>
          <span class="globe-embed__hint">loads when in view · fully interactive · or open live ↗</span>
@@ -164,12 +165,12 @@ function demoAsr(demoEl, project) {
          <span class="asr__stagelabel mono"></span>
        </div>
        <div class="asr__callout"><span class="asr__callout-mark mono">›</span><span class="asr__callout-text"></span></div>
-       <div class="asr__stack">${rowsHtml}</div>
        <div class="asr__legend mono">
          <span><i class="ldot ldot--structural"></i>Whisper · repetition loop</span>
          <span><i class="ldot ldot--semantic"></i>Qwen · hallucination / drift</span>
          <span><i class="ldot ldot--flag"></i>flagged unclear</span>
        </div>
+       <div class="asr__stack">${rowsHtml}</div>
        <div class="asr__detail mono">${d.caption}</div>
      </div>`;
 
@@ -247,7 +248,7 @@ function buildYieldChart(chart) {
     const pts = s.points.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ");
     paths += `<polyline class="ychart__line" points="${pts}" style="stroke:${c}" pathLength="1"/>`;
     s.points.forEach((v, i) => {
-      dots += `<circle class="ychart__dot" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.6" style="fill:${c}"/>`;
+      dots += `<circle class="ychart__dot" data-fx="${(N === 1 ? 1 : i / (N - 1)).toFixed(3)}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.6" style="fill:${c}"/>`;
     });
     const ly = padT + 6 + si * 18;
     legend += `<line class="ychart__legline" x1="${padL + plotW + 14}" y1="${ly}" x2="${padL + plotW + 30}" y2="${ly}" style="stroke:${c}"/>`;
@@ -321,6 +322,15 @@ function demoPipeline(demoEl, project) {
   const toasts = Array.from(root.querySelectorAll(".pipe__toast"));
   const OBS = 160000;
 
+  // yield chart: drive the line draw + dot reveal in lockstep with the run progress
+  const ychart = root.querySelector(".ychart");
+  const ylines = Array.from(root.querySelectorAll(".ychart__line"));
+  const ydots = Array.from(root.querySelectorAll(".ychart__dot"));
+  const drawChart = (e) => {
+    ylines.forEach((l) => (l.style.strokeDashoffset = (1 - e).toFixed(3)));
+    ydots.forEach((dt) => (dt.style.opacity = parseFloat(dt.dataset.fx) <= e + 1e-6 ? "1" : "0"));
+  };
+
   let running = false, raf = null;
   const showDetail = (i) => { detail.textContent = `0${Number(i) + 1} · ${d.stages[i].detail}`; };
   stageEls.forEach((el) => {
@@ -343,6 +353,8 @@ function demoPipeline(demoEl, project) {
     stageEls.forEach((s) => s.classList.add("is-done"));
     connEls.forEach((c) => c.classList.add("is-done"));
     setProgress(1);
+    if (ychart) ychart.classList.add("is-run");
+    drawChart(1);
     manifest.hidden = false;
     toasts.forEach((t) => t.classList.add("is-show"));
     status.textContent = "✓ 160,000+ observations · manifest verified";
@@ -357,6 +369,8 @@ function demoPipeline(demoEl, project) {
     manifest.hidden = true;
     toasts.forEach((t) => t.classList.remove("is-show"));
     setProgress(0);
+    if (ychart) ychart.classList.add("is-run");
+    drawChart(0);
     status.textContent = "scraping the portal, one date at a time…";
     // linear per-stage dwell so each stage's detail stays readable (not eased — easing flashed the early stages by)
     const N = stageEls.length, DWELL = 1800, TOTAL = N * DWELL, t0 = performance.now();
@@ -364,7 +378,9 @@ function demoPipeline(demoEl, project) {
     const tick = (t) => {
       const elapsed = t - t0;
       const p = Math.min(1, elapsed / TOTAL);
-      setProgress(1 - Math.pow(1 - p, 1.6)); // counter + bar ease gently toward 160,000
+      const e = 1 - Math.pow(1 - p, 1.6); // counter + bar + chart ease gently toward the end
+      setProgress(e);
+      drawChart(e);
       const idx = Math.min(N - 1, Math.floor(elapsed / DWELL));
       if (idx > lit) {
         for (let k = lit + 1; k <= idx; k++) {
@@ -383,6 +399,7 @@ function demoPipeline(demoEl, project) {
       stageEls[N - 1].classList.add("is-done");
       if (connEls[N - 1]) connEls[N - 1].classList.add("is-done");
       setProgress(1);
+      drawChart(1);
       manifest.hidden = false;
       status.textContent = "✓ 160,000+ observations · manifest verified";
       if (toasts[0]) toasts[0].classList.add("is-show");
@@ -416,16 +433,16 @@ function demoOcean(demoEl, project) {
 
   body.innerHTML =
     `<div class="ocean">
-       <div class="browser">
-         <div class="browser__bar mono">
-           <span class="browser__dots"><i></i><i></i><i></i></span>
-           <span class="browser__url">oceancrew.me · offline, in redesign</span>
-         </div>
-         <div class="ocean__shot">
-           <img src="${d.crew}" alt="OCEAN Crew demo-persona crew page" loading="lazy" />
-         </div>
+       <div class="ocean__phones">
+         <figure class="ocean__phone">
+           <div class="phone"><img class="phone__shot" src="${d.login}" alt="OCEAN sign-in screen: email magic link or continue with Google" loading="lazy" /></div>
+           <figcaption class="demo-caption mono">${d.loginCaption}</figcaption>
+         </figure>
+         <figure class="ocean__phone">
+           <div class="phone"><img class="phone__shot" src="${d.crew}" alt="OCEAN crew page for a demo persona: five characters around a Big Five radar" loading="lazy" /></div>
+           <figcaption class="demo-caption mono">${d.crewCaption}</figcaption>
+         </figure>
        </div>
-       <div class="demo-caption mono">${d.crewCaption}</div>
        <div class="ocean__gallerylabel mono">15 of the 45 character archetypes · scroll to browse →</div>
        <div class="ocean__strip">${thumbs}</div>
      </div>`;

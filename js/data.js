@@ -8,19 +8,19 @@ const SITE = {
   name: "Loong Bong",
   tagline: {
     lead: "Same tools, very different rigour.",
-    sub: "Vibe-code the prototype, then engineer what people actually use.",
+    sub: "I direct AI to build things, and match the rigour to the stakes. Five projects below, from vibe-coded to rigorously engineered.",
   },
   about:
     'Hi, I\'m Loong. I trained as a chemical engineer, and a scientific theory I came up with as an undergrad ' +
     'ended up published in <a href="https://doi.org/10.1039/D0PY01311K" target="_blank" rel="noopener"><em>Polymer Chemistry</em></a>, ' +
     'cited 40+ times. I spent the next five years as an engineer at PETRONAS, where a <strong>Lean Six Sigma Green Belt</strong> ' +
     'taught me how to systematically take a process apart, <span class="flow">find where the value flows and blocks, improve on it, ' +
-    'and then make the fix last</span>. Today I\'m in Strategy &amp; Transactions at EY-Parthenon, but outside of work I ' +
+    'and then make the fix last</span>. Today I\'m in Strategy &amp; Transactions at EY-Parthenon, with an MBA, but outside of work I ' +
     'direct AI at the stuff I wish existed, and build it. I vibe-coded a live globe of a Web3 startup\'s node ' +
     'network that the startup adopted, now with 800+ monthly visitors. But for a personality app that\'s an ' +
     'ongoing passion project of mine, I\'m engineering it properly and carefully, with a full roadmap, highly ' +
     'detailed specs, and multiple review layers to ensure security (one of which caught a real security hole ' +
-    'before launch). Everyone has the same access to these incredibly powerful AI tools, but having developed ' +
+    'before launch). Everyone has the same access to these incredibly powerful AI tools, but having ' +
     'judgement and taste, and <strong>knowing how much rigour each thing needs, is the differentiator</strong>.',
   rangeLine:
     'Outside the build: 20+ essays on personality psychology, and ' +
@@ -59,9 +59,11 @@ const PROJECTS = [
         choice: "Vibe-code it on a shoestring instead of engineering it like a product",
         alt: "tests, a security pass, and clean architecture from day one",
         why:
-          "Nothing critical rides on a node monitor, so it didn't need payments-app rigour. I built it with Claude" +
-          "Code on $250 of free credits. To make them last, I stayed on Sonnet instead of the pricier Opus and " +
-          "scoped each session to a batch of features I could finish.",
+          "The binding constraint was the budget: a fixed $250 of free credits that expire, so I optimised for " +
+          "shipping fast over polishing the plumbing. A node monitor is a read-only view, so a rough edge there is " +
+          "cosmetic, not costly, and it didn't need payments-app rigour. I built it with Claude Code, stayed on " +
+          "Sonnet instead of the pricier Opus to stretch the credits, and scoped each session to a batch of " +
+          "features I could finish.",
       },
       {
         choice: "Crawl the whole network, not just the startup's seed nodes",
@@ -73,7 +75,7 @@ const PROJECTS = [
           "can actually see each node, so the isolated ones stick out.",
       },
       {
-        choice: "Pour most of the work into how it feels, not into more features",
+        choice: "Spend most of the time refining the look and feel",
         alt: "ship more features, rougher",
         why:
           "About three-quarters of the time went into the feel: draggable controls, node pop-ups, little animations, " +
@@ -82,12 +84,13 @@ const PROJECTS = [
           "cursor before I could click them, so I made it pause whenever you hover one.",
       },
       {
-        choice: "Put real rigour into the terms of use, even on a throwaway",
+        choice: "Take the terms of use seriously, line by line",
         alt: "a boilerplate disclaimer, or none",
         why:
-          "People could make real mining decisions off what the globe showed, so the real risk here was legal, " +
-          "not technical. I drafted the terms and disclaimer with AI, read every line and edited where it mattered, " +
-          "and made the page force you to scroll all the way down before the accept button works.",
+          "People could make real mining decisions off what the globe showed, so the risk here was legal, not " +
+          "technical. The easy path was to paste in a boilerplate or ship the AI's first draft unread. Instead I " +
+          "drafted the terms with AI, then went through every line and edited where it mattered, and made the page " +
+          "force you to scroll all the way down before the accept button works.",
       },
     ],
     hardPart:
@@ -186,7 +189,7 @@ const PROJECTS = [
     accent: "#e7ddc9",
     preview: "An A/B evaluation of two speech-to-text models, and a designed ensemble to reconcile them.",
     problem:
-      "I record meetings sometimes and never want to sit through them again to write up notes. So I tried Whisper, " +
+      "I record meetings sometimes, so nothing said outside the notes I take in the room slips away. I tried Whisper, " +
       "the obvious open-source option, and it was solid until it wasn't: on the rough patches it mangled words in " +
       "ways that quietly changed what someone said. Qwen had just dropped a new speech model, so I ran it on the same " +
       "audio to compare. They broke in completely different places.",
@@ -213,8 +216,7 @@ const PROJECTS = [
         alt: "a cloud transcription API",
         why:
           "The audio is sensitive, so I didn't want it leaving my machine. Local costs nothing per hour, and it let " +
-          "me see what these models can really do on consumer hardware. I think that's where this is heading anyway: " +
-          "more of it runs on your own device every year.",
+          "me see what these models can really do on consumer hardware. Local, private AI is the future.",
       },
     ],
     hardPart:
@@ -420,8 +422,7 @@ const PROJECTS = [
       "see how much better the whole thing could be, so I'd rather take the time to get the design right. " +
       "I'm regenerating the art one piece at a time, down to the backdrop motifs on " +
       "the share cards, until each one is right. Before it goes live, the security review gets run again on the final " +
-      "build, plus abuse monitoring on the auth and payment paths and a proper load test before it goes anywhere near " +
-      "real cards.",
+      "build, plus abuse monitoring on the auth and payment paths and a proper load test.",
     stats: {
       lead: 'a login, card payments, personal results · <b>built careful from day one</b>',
       items: [
@@ -441,8 +442,10 @@ const PROJECTS = [
     ],
     demo: {
       type: "ocean",
-      crew: "assets/ocean/crew-emma.webp",
-      crewCaption: "Demo persona. The crew page renders five characters around a Big Five radar.",
+      login: "assets/ocean/m-login.webp",
+      loginCaption: "The sign-in. A real login, with payments behind it, is exactly where the pre-launch review caught the open-redirect.",
+      crew: "assets/ocean/m-crew.webp",
+      crewCaption: "Demo persona. The crew page turns your Big Five scores into five characters around a radar.",
       portraits: [
         { file: "assets/ocean/portraits/the-achiever.webp", name: "The Achiever" },
         { file: "assets/ocean/portraits/the-artist.webp", name: "The Artist" },

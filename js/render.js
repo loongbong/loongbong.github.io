@@ -69,6 +69,7 @@ function renderSpectrum() {
   }
 
   $("#spectrum").innerHTML = `
+    <div class="spectrum__cue mono">scroll, or tap a project <span aria-hidden="true">↓</span></div>
     <div class="spectrum__labels">
       <span class="spectrum__label spectrum__label--left">vibe-coded, shipped fast</span>
       <span class="spectrum__label spectrum__label--right">rigorously engineered</span>
@@ -244,7 +245,7 @@ function renderAbout() {
           </div>
           <div class="idplate__id">
             <div class="idplate__name">LOONG BONG</div>
-            <div class="idplate__role">chemical engineer · strategy &amp; transactions · directs AI to build</div>
+            <div class="idplate__role">chemical engineer · MBA · strategy &amp; transactions · directs AI to build</div>
           </div>
         </div>
         <div class="flowsig" data-viz="flowsig">
@@ -268,10 +269,19 @@ function renderAbout() {
 
 /* ---- Colophon (honest instrument readout) ---- */
 function renderColophon() {
+  const links = SITE.links
+    .map((l) => `<a href="${l.href}" target="_blank" rel="noopener">${l.label}</a>`)
+    .join("");
   $("#colophon").innerHTML = `
-    <span>built with vanilla HTML · CSS · JS · no framework</span>
-    <span>hosted on GitHub Pages</span>
-    <span>© ${"Loong Bong"}</span>`;
+    <div class="colophon__cta">
+      <p class="colophon__line">Open to remote roles in AI strategy, operations, and research. The best way to reach me is LinkedIn.</p>
+      <nav class="colophon__links" aria-label="Profiles and links">${links}</nav>
+    </div>
+    <div class="colophon__meta mono">
+      <span>built with vanilla HTML · CSS · JS · no framework</span>
+      <span>hosted on GitHub Pages</span>
+      <span>© Loong Bong</span>
+    </div>`;
 }
 
 function renderAll() {

@@ -206,8 +206,8 @@
     let nowI = T.findIndex((t) => t.now); if (nowI < 0) nowI = 0;
 
     svg.appendChild(el("line", { class: "traj__base", x1: 40, y1: 202, x2: 620, y2: 202 }));
-    svg.appendChild(el("text", { class: "traj__axis", x: 40, y: 222 }, "less rigour"));
-    const ax = el("text", { class: "traj__axis", x: 620, y: 222 }, "more rigour"); ax.setAttribute("text-anchor", "end"); svg.appendChild(ax);
+    svg.appendChild(el("text", { class: "traj__axis", x: 40, y: 222 }, "now"));
+    const ax = el("text", { class: "traj__axis", x: 620, y: 222 }, "planned"); ax.setAttribute("text-anchor", "end"); svg.appendChild(ax);
 
     const seg = (a, b) => { let d = `M ${xs[a]} ${ys[a]}`; for (let i = a + 1; i <= b; i++) d += ` L ${xs[i]} ${ys[i]}`; return d; };
     if (nowI >= 1) svg.appendChild(el("path", { class: "traj__solid", pathLength: 1, d: seg(0, nowI) }));
