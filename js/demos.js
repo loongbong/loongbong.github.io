@@ -223,7 +223,7 @@ function demoAsr(demoEl, project) {
 /* ---- pipeline: animated 5-stage run + a hand-rolled SVG yield-curve chart ---- */
 function buildYieldChart(chart) {
   const W = 684, H = 280;
-  const padL = 46, padR = 150, padT = 20, padB = 34;
+  const padL = 46, padR = 162, padT = 20, padB = 34;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const N = chart.tenors.length;
   const yMin = 2.5, yMax = 4.75;

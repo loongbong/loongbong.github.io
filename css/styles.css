@@ -652,13 +652,13 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .ychart-wrap { margin-top: 1.3rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
 .ychart { width: 100%; height: auto; display: block; overflow: visible; }
 .ychart__grid { stroke: var(--line); stroke-width: 1; }
-.ychart__ylabel { fill: var(--text-dim); font-family: var(--mono); font-size: 13px; text-anchor: end; }
-.ychart__xlabel { fill: var(--text-dim); font-family: var(--mono); font-size: 13px; text-anchor: middle; }
-.ychart__unit { fill: var(--text-faint); font-family: var(--mono); font-size: 13px; text-anchor: start; letter-spacing: 0.06em; }
+.ychart__ylabel { fill: var(--text-dim); font-family: var(--mono); font-size: 11.5px; text-anchor: end; }
+.ychart__xlabel { fill: var(--text-dim); font-family: var(--mono); font-size: 11.5px; text-anchor: middle; }
+.ychart__unit { fill: var(--text-faint); font-family: var(--mono); font-size: 11.5px; text-anchor: start; letter-spacing: 0.06em; }
 .ychart__line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .ychart__dot { transition: opacity 0.25s ease; }
 .ychart__legline { stroke-width: 2; }
-.ychart__leg { fill: var(--text-dim); font-family: var(--mono); font-size: 13px; }
+.ychart__leg { fill: var(--text-dim); font-family: var(--mono); font-size: 11.5px; }
 @media (prefers-reduced-motion: no-preference) {
   .ychart__line { stroke-dasharray: 1; stroke-dashoffset: 1; }
   .demo.is-in .ychart__line { animation: ydraw 1.2s var(--ease) forwards; }
