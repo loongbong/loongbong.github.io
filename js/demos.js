@@ -158,7 +158,7 @@ function demoBadminton(demoEl, project) {
        </div>
      </div>
      <div class="embed-foot mono">
-       <span>the one project with public source. built mobile-first.</span>
+       <span>a shipped app with public source. built mobile-first.</span>
        <a href="${repo}" target="_blank" rel="noopener">browse the code ↗</a>
      </div>`;
 
@@ -242,8 +242,11 @@ function demoAsr(demoEl, project) {
       el.querySelectorAll(".seg").forEach((sg) => { sg.tabIndex = shown ? 0 : -1; });
     });
     stageLabel.textContent = stageNames[stage];
-    if (callout) typeHTML(callout, steps[stage] || "");
-    stepBtn.disabled = stage >= rows.length - 1;
+    const isLast = stage >= rows.length - 1;
+    // keep the step button live while the last line types so it can still be snapped to full;
+    // only disable once that final line has fully revealed (nothing left to step to)
+    stepBtn.disabled = false;
+    if (callout) typeHTML(callout, steps[stage] || "", isLast ? () => { stepBtn.disabled = true; } : undefined);
   };
 
   const segs = Array.from(root.querySelectorAll(".seg"));
@@ -260,7 +263,8 @@ function demoAsr(demoEl, project) {
   const dismissCue = () => { stepBtn.classList.remove("chip-btn--cue"); if (cueEl) cueEl.classList.add("is-dismissed"); };
   stepBtn.addEventListener("click", () => {
     dismissCue();
-    if (snapType(callout)) return; // mid-type: finish the current line first, then advance on the next click
+    // mid-type: finish the current line first; if it was the last line there's nothing left to step to
+    if (snapType(callout)) { if (stage >= rows.length - 1) stepBtn.disabled = true; return; }
     if (stage < rows.length - 1) { stage++; applyStage(); }
   });
   root.querySelector('[data-act="restart"]').addEventListener("click", () => { stage = 0; applyStage(); clearActive(); });

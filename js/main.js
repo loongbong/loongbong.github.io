@@ -42,7 +42,7 @@ function scrollAffordances() {
   // change. The offsetTop chain ignores transforms, so the entrance animation can't skew
   // it. Reading layout (getBoundingClientRect) on every scroll frame forced a synchronous
   // reflow that fought the typewriter's per-character DOM writes — the About-scroll jitter.
-  let tops = [];
+  let tops = [], revealed = false; // the continue cue stays hidden until the entrance has played
   const absTop = (el) => { let y = 0; for (let n = el; n; n = n.offsetParent) y += n.offsetTop; return y; };
   const measure = () => { tops = targets.map((t) => absTop(t.el)); };
 
@@ -52,7 +52,7 @@ function scrollAffordances() {
     const y = window.scrollY;
     const nxt = nextTarget();
     const nearBottom = window.innerHeight + y >= document.body.scrollHeight - 80;
-    cue.hidden = !nxt || nearBottom;
+    cue.hidden = !revealed || !nxt || nearBottom;
     toTop.hidden = y < window.innerHeight * 0.9;
     if (activeLabel) { let cur = ""; for (let k = 0; k < targets.length; k++) if (tops[k] <= y + 140) cur = targets[k].name; activeLabel.textContent = cur; }
   };
@@ -71,10 +71,12 @@ function scrollAffordances() {
   }, { passive: true });
   measure();
   window.addEventListener("resize", () => { measure(); update(); });
-  if ("ResizeObserver" in window) new ResizeObserver(() => measure()).observe(document.body);
+  // body-height changes (e.g. the About typewriter + colophon expanding) must refresh the
+  // visible cue/label state, not just the cached offsets — otherwise it goes stale until the next scroll
+  if ("ResizeObserver" in window) new ResizeObserver(() => { measure(); update(); }).observe(document.body);
 
   // reveal the cue only after the hero entrance has played ("after the landing animation")
-  setTimeout(update, REDUCE ? 0 : 2600);
+  setTimeout(() => { revealed = true; update(); }, REDUCE ? 0 : 2600);
 }
 
 /* ---- signature entrance: axis draws in, nodes ignite, hero settles ---- */

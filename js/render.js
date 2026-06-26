@@ -278,7 +278,7 @@ function renderColophon() {
       <nav class="colophon__links" aria-label="Profiles and links">${links}</nav>
     </div>
     <div class="colophon__meta mono">
-      <span>built with vanilla HTML · CSS · JS · no framework</span>
+      <a href="https://github.com/loongbong/loongbong.github.io" target="_blank" rel="noopener">built with vanilla HTML · CSS · JS · no framework ↗</a>
       <span>hosted on GitHub Pages</span>
       <span>© Loong Bong</span>
     </div>`;

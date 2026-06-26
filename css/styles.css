@@ -802,6 +802,8 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 }
 .colophon__links a:hover { color: var(--accent); border-color: var(--accent); }
 .colophon__meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem 2rem; font-family: var(--mono); font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.05em; }
+.colophon__meta a { color: var(--text-dim); border-bottom: 1px dotted var(--text-faint); transition: color var(--d-int) ease, border-color var(--d-int) ease; }
+.colophon__meta a:hover { color: var(--accent); border-color: var(--accent); }
 
 /* =========================================================================
    Motion — entrance + scroll-reveal. All gated by prefers-reduced-motion.
