@@ -536,6 +536,17 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .chip-btn:disabled { opacity: 0.4; cursor: default; }
 .chip-btn--ghost { border-color: var(--line); color: var(--text-dim); background: transparent; }
 .chip-btn--ghost:hover:not(:disabled) { background: var(--bg-2); color: var(--text); }
+/* one-time guidance cue on an interactive demo's primary button (stops on first use) */
+@media (prefers-reduced-motion: no-preference) {
+  .chip-btn--cue { animation: cuepulse 1.9s var(--ease) infinite; }
+}
+@keyframes cuepulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+  70% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); }
+}
+.viz-cue { color: var(--accent); font-size: 0.74rem; letter-spacing: 0.04em; opacity: 0.85; transition: opacity 0.45s ease; }
+.viz-cue.is-dismissed { opacity: 0; pointer-events: none; }
 
 .demo-caption { padding: 0.7rem 0.9rem 0; color: var(--text-faint); font-size: 0.76rem; letter-spacing: 0.03em; line-height: 1.55; }
 

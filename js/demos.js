@@ -160,8 +160,9 @@ function demoAsr(demoEl, project) {
   body.innerHTML =
     `<div class="asr">
        <div class="asr__controls">
-         <button class="chip-btn" data-act="step" type="button">▶ step</button>
+         <button class="chip-btn chip-btn--cue" data-act="step" type="button">▶ step</button>
          <button class="chip-btn chip-btn--ghost" data-act="restart" type="button">↺ restart</button>
+         <span class="viz-cue mono" data-cue>← step through it</span>
          <span class="asr__stagelabel mono"></span>
        </div>
        <div class="asr__callout"><span class="asr__callout-mark mono">›</span><span class="asr__callout-text"></span></div>
@@ -206,7 +207,9 @@ function demoAsr(demoEl, project) {
     detail.textContent = d.caption;
   };
 
-  stepBtn.addEventListener("click", () => { if (stage < rows.length - 1) { stage++; applyStage(); } });
+  const cueEl = root.querySelector("[data-cue]");
+  const dismissCue = () => { stepBtn.classList.remove("chip-btn--cue"); if (cueEl) cueEl.classList.add("is-dismissed"); };
+  stepBtn.addEventListener("click", () => { dismissCue(); if (stage < rows.length - 1) { stage++; applyStage(); } });
   root.querySelector('[data-act="restart"]').addEventListener("click", () => { stage = 0; applyStage(); clearActive(); });
   segs.forEach((sg) =>
     ["mouseenter", "focus", "click"].forEach((ev) => sg.addEventListener(ev, () => setActiveSeg(sg.dataset.seg)))
@@ -284,7 +287,8 @@ function demoPipeline(demoEl, project) {
   body.innerHTML =
     `<div class="pipe-demo">
        <div class="pipe__controls">
-         <button class="chip-btn" data-act="run" type="button">▶ run pipeline</button>
+         <button class="chip-btn chip-btn--cue" data-act="run" type="button">▶ run pipeline</button>
+         <span class="viz-cue mono" data-cue>← click to run</span>
          <span class="pipe__status mono">idle</span>
        </div>
        <div class="pipe__monitor">
@@ -299,7 +303,7 @@ function demoPipeline(demoEl, project) {
          </div>
        </div>
        <div class="pipe">${stagesHtml}</div>
-       <div class="pipe__detail mono">Hover a stage, or run the pipeline.</div>
+       <div class="pipe__detail mono">Run the pipeline to watch it build a verified dataset, stage by stage. Or hover any stage.</div>
        <div class="pipe__manifest mono" hidden>manifest · sha256 <b>9f2a1c7e…b4c0</b> · every value range-checked + provenance-logged</div>
        <div class="pipe__toasts" aria-live="polite">
          <div class="pipe__toast"><span class="pipe__toast-ico">✓</span><span class="mono">160,000+ observations scraped</span></div>
@@ -321,6 +325,10 @@ function demoPipeline(demoEl, project) {
   const manifest = root.querySelector(".pipe__manifest");
   const toasts = Array.from(root.querySelectorAll(".pipe__toast"));
   const OBS = 160000;
+
+  const runBtn = root.querySelector('[data-act="run"]');
+  const cueEl = root.querySelector("[data-cue]");
+  const dismissCue = () => { runBtn.classList.remove("chip-btn--cue"); if (cueEl) cueEl.classList.add("is-dismissed"); };
 
   // yield chart: drive the line draw + dot reveal in lockstep with the run progress
   const ychart = root.querySelector(".ychart");
@@ -350,6 +358,7 @@ function demoPipeline(demoEl, project) {
     numEl.textContent = Math.round(OBS * p).toLocaleString("en-US");
   };
   const finalState = () => {
+    dismissCue();
     stageEls.forEach((s) => s.classList.add("is-done"));
     connEls.forEach((c) => c.classList.add("is-done"));
     setProgress(1);
@@ -362,6 +371,7 @@ function demoPipeline(demoEl, project) {
 
   const run = () => {
     if (running) return;
+    dismissCue();
     if (DEMO_REDUCE) return finalState();
     running = true;
     stageEls.forEach((s) => s.classList.remove("is-done", "is-hot"));
