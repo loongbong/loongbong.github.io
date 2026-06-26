@@ -92,18 +92,23 @@ function demoBadminton(demoEl, project) {
   const body = demoEl.querySelector(".demo__body");
 
   bar.innerHTML =
-    `<span>live app · loongbong.github.io</span>` +
+    `<span>live app · mobile view</span>` +
     `<a class="demo__open" href="${src}" target="_blank" rel="noopener">open live ↗</a>`;
 
   body.innerHTML =
-    `<div class="embed embed--app">
-       <div class="embed__poster">
-         <span class="mono embed__title">live match logger</span>
-         <span class="embed__hint">loads when in view · fully interactive · or open live ↗</span>
+    `<div class="phonebay">
+       <div class="phone">
+         <span class="phone__notch"></span>
+         <div class="embed embed--phone">
+           <div class="embed__poster">
+             <span class="mono embed__title">live match logger</span>
+             <span class="embed__hint">loads when in view · tap to log a match · or open live ↗</span>
+           </div>
+         </div>
        </div>
      </div>
      <div class="embed-foot mono">
-       <span>the one project with public source.</span>
+       <span>the one project with public source. built mobile-first.</span>
        <a href="${repo}" target="_blank" rel="noopener">browse the code ↗</a>
      </div>`;
 
@@ -158,6 +163,7 @@ function demoAsr(demoEl, project) {
          <button class="chip-btn chip-btn--ghost" data-act="restart" type="button">↺ restart</button>
          <span class="asr__stagelabel mono"></span>
        </div>
+       <div class="asr__callout"><span class="asr__callout-mark mono">›</span><span class="asr__callout-text"></span></div>
        <div class="asr__stack">${rowsHtml}</div>
        <div class="asr__legend mono">
          <span><i class="ldot ldot--structural"></i>Whisper · repetition loop</span>
@@ -170,9 +176,11 @@ function demoAsr(demoEl, project) {
   const root = body.querySelector(".asr");
   const detail = root.querySelector(".asr__detail");
   const stageLabel = root.querySelector(".asr__stagelabel");
+  const callout = root.querySelector(".asr__callout-text");
   const rowsEls = Array.from(root.querySelectorAll(".asr-row"));
   const stepBtn = root.querySelector('[data-act="step"]');
   const stageNames = ["reference", "+ Whisper", "+ Qwen", "+ reconciled"];
+  const steps = d.steps || [];
   let stage = 0;
 
   const applyStage = () => {
@@ -183,6 +191,7 @@ function demoAsr(demoEl, project) {
       el.querySelectorAll(".seg").forEach((sg) => { sg.tabIndex = shown ? 0 : -1; });
     });
     stageLabel.textContent = stageNames[stage];
+    if (callout) { callout.textContent = steps[stage] || ""; }
     stepBtn.disabled = stage >= rows.length - 1;
   };
 
@@ -266,6 +275,7 @@ function demoPipeline(demoEl, project) {
         `<div class="pipe__stage" data-i="${i}" tabindex="0">
            <span class="pipe__idx mono">0${i + 1}</span>
            <span class="pipe__name">${s.name}</span>
+           <span class="pipe__metric mono">${s.metric || ""}</span>
          </div>` + (i < d.stages.length - 1 ? `<span class="pipe__conn" data-i="${i}"></span>` : "")
     )
     .join("");
@@ -274,10 +284,26 @@ function demoPipeline(demoEl, project) {
     `<div class="pipe-demo">
        <div class="pipe__controls">
          <button class="chip-btn" data-act="run" type="button">▶ run pipeline</button>
-         <span class="pipe__status mono"></span>
+         <span class="pipe__status mono">idle</span>
+       </div>
+       <div class="pipe__monitor">
+         <div class="pipe__readout">
+           <span class="pipe__count mono"><b class="pipe__num">0</b><span class="pipe__count-sfx">+ observations</span></span>
+           <span class="pipe__sub mono">daily yields · 10 maturities · audit-trailed</span>
+         </div>
+         <div class="pipe__range mono">
+           <span>2001</span>
+           <span class="pipe__track"><span class="pipe__fill"></span><span class="pipe__head"></span></span>
+           <span>2026</span>
+         </div>
        </div>
        <div class="pipe">${stagesHtml}</div>
        <div class="pipe__detail mono">Hover a stage, or run the pipeline.</div>
+       <div class="pipe__manifest mono" hidden>manifest · sha256 <b>9f2a1c7e…b4c0</b> · every value range-checked + provenance-logged</div>
+       <div class="pipe__toasts" aria-live="polite">
+         <div class="pipe__toast"><span class="pipe__toast-ico">✓</span><span class="mono">160,000+ observations scraped</span></div>
+         <div class="pipe__toast"><span class="pipe__toast-ico">✓</span><span class="mono">validated to source · hash manifest written</span></div>
+       </div>
        <div class="ychart-wrap">${buildYieldChart(d.chart)}</div>
        <div class="demo-caption mono">${d.chart.caption}</div>
      </div>`;
@@ -288,7 +314,14 @@ function demoPipeline(demoEl, project) {
   const detail = root.querySelector(".pipe__detail");
   const status = root.querySelector(".pipe__status");
 
-  let running = false;
+  const numEl = root.querySelector(".pipe__num");
+  const fillEl = root.querySelector(".pipe__fill");
+  const headEl = root.querySelector(".pipe__head");
+  const manifest = root.querySelector(".pipe__manifest");
+  const toasts = Array.from(root.querySelectorAll(".pipe__toast"));
+  const OBS = 160000;
+
+  let running = false, raf = null;
   const showDetail = (i) => { detail.textContent = `0${Number(i) + 1} · ${d.stages[i].detail}`; };
   stageEls.forEach((el) => {
     const i = el.dataset.i;
@@ -301,35 +334,69 @@ function demoPipeline(demoEl, project) {
     );
   });
 
+  const setProgress = (p) => {
+    fillEl.style.width = (p * 100).toFixed(1) + "%";
+    headEl.style.left = (p * 100).toFixed(1) + "%";
+    numEl.textContent = Math.round(OBS * p).toLocaleString("en-US");
+  };
+  const finalState = () => {
+    stageEls.forEach((s) => s.classList.add("is-done"));
+    connEls.forEach((c) => c.classList.add("is-done"));
+    setProgress(1);
+    manifest.hidden = false;
+    toasts.forEach((t) => t.classList.add("is-show"));
+    status.textContent = "✓ 160,000+ observations · manifest verified";
+  };
+
   const run = () => {
     if (running) return;
+    if (DEMO_REDUCE) return finalState();
     running = true;
     stageEls.forEach((s) => s.classList.remove("is-done", "is-hot"));
     connEls.forEach((c) => c.classList.remove("is-done"));
-    status.textContent = "running...";
-    const step = (i) => {
-      if (i >= stageEls.length) { status.textContent = "✓ manifest verified"; running = false; return; }
-      stageEls[i].classList.add("is-hot");
-      showDetail(i);
-      setTimeout(() => {
-        stageEls[i].classList.remove("is-hot");
-        stageEls[i].classList.add("is-done");
-        if (connEls[i]) connEls[i].classList.add("is-done");
-        step(i + 1);
-      }, 600);
+    manifest.hidden = true;
+    toasts.forEach((t) => t.classList.remove("is-show"));
+    setProgress(0);
+    status.textContent = "scraping the portal, one date at a time…";
+    // linear per-stage dwell so each stage's detail stays readable (not eased — easing flashed the early stages by)
+    const N = stageEls.length, DWELL = 1800, TOTAL = N * DWELL, t0 = performance.now();
+    let lit = -1;
+    const tick = (t) => {
+      const elapsed = t - t0;
+      const p = Math.min(1, elapsed / TOTAL);
+      setProgress(1 - Math.pow(1 - p, 1.6)); // counter + bar ease gently toward 160,000
+      const idx = Math.min(N - 1, Math.floor(elapsed / DWELL));
+      if (idx > lit) {
+        for (let k = lit + 1; k <= idx; k++) {
+          if (k > 0) {
+            stageEls[k - 1].classList.remove("is-hot");
+            stageEls[k - 1].classList.add("is-done");
+            if (connEls[k - 1]) connEls[k - 1].classList.add("is-done");
+          }
+          stageEls[k].classList.add("is-hot");
+          showDetail(k);
+        }
+        lit = idx;
+      }
+      if (elapsed < TOTAL) { raf = requestAnimationFrame(tick); return; }
+      stageEls[N - 1].classList.remove("is-hot");
+      stageEls[N - 1].classList.add("is-done");
+      if (connEls[N - 1]) connEls[N - 1].classList.add("is-done");
+      setProgress(1);
+      manifest.hidden = false;
+      status.textContent = "✓ 160,000+ observations · manifest verified";
+      if (toasts[0]) toasts[0].classList.add("is-show");
+      if (toasts[1]) setTimeout(() => toasts[1].classList.add("is-show"), 500);
+      running = false;
     };
-    step(0);
+    raf = requestAnimationFrame(tick);
   };
   root.querySelector('[data-act="run"]').addEventListener("click", run);
 
-  if (DEMO_REDUCE) {
-    stageEls.forEach((s) => s.classList.add("is-done"));
-    connEls.forEach((c) => c.classList.add("is-done"));
-    status.textContent = "✓ manifest verified";
-  }
+  if (DEMO_REDUCE) finalState();
 }
 
-/* ---- ocean: real crew screenshot + character-portrait lightbox gallery ---- */
+/* ---- ocean: crew screenshot (browser frame) + a horizontally-scrollable portrait strip ---- */
 function demoOcean(demoEl, project) {
   const d = project.demo;
   const bar = demoEl.querySelector(".demo__bar");
@@ -340,60 +407,28 @@ function demoOcean(demoEl, project) {
   const thumbs = d.portraits
     .map(
       (p) =>
-        `<button class="ocean__thumb" type="button" data-full="${p.file}" data-name="${p.name}" aria-label="${p.name}">
+        `<figure class="ocean__thumb">
            <img src="${p.file}" alt="${p.name}" loading="lazy" />
-           <span class="ocean__thumbname mono">${p.name}</span>
-         </button>`
+           <figcaption class="ocean__thumbname mono">${p.name}</figcaption>
+         </figure>`
     )
     .join("");
 
   body.innerHTML =
     `<div class="ocean">
-       <button class="ocean__shot" type="button" data-full="${d.crew}" data-name="The crew page">
-         <img src="${d.crew}" alt="OCEAN Crew demo-persona crew page" loading="lazy" />
-       </button>
-       <div class="demo-caption mono">${d.crewCaption}</div>
-       <div class="ocean__gallerylabel mono">15 of 45 archetypes · select any to enlarge</div>
-       <div class="ocean__gallery">${thumbs}</div>
-       <div class="lightbox" role="dialog" aria-modal="true" aria-label="Character portrait" aria-hidden="true">
-         <button class="lightbox__close" type="button" aria-label="close">✕</button>
-         <figure class="lightbox__fig">
-           <img class="lightbox__img" alt="" />
-           <figcaption class="lightbox__cap mono"></figcaption>
-         </figure>
+       <div class="browser">
+         <div class="browser__bar mono">
+           <span class="browser__dots"><i></i><i></i><i></i></span>
+           <span class="browser__url">oceancrew.me · offline, in redesign</span>
+         </div>
+         <div class="ocean__shot">
+           <img src="${d.crew}" alt="OCEAN Crew demo-persona crew page" loading="lazy" />
+         </div>
        </div>
+       <div class="demo-caption mono">${d.crewCaption}</div>
+       <div class="ocean__gallerylabel mono">15 of the 45 character archetypes · scroll to browse →</div>
+       <div class="ocean__strip">${thumbs}</div>
      </div>`;
-
-  const root = body.querySelector(".ocean");
-  const lb = root.querySelector(".lightbox");
-  const lbImg = lb.querySelector(".lightbox__img");
-  const lbCap = lb.querySelector(".lightbox__cap");
-  const lbClose = lb.querySelector(".lightbox__close");
-  let lastFocus = null;
-  const onKey = (e) => { if (e.key === "Escape") close(); };
-
-  const open = (src, name) => {
-    lbImg.src = src;
-    lbImg.alt = name;
-    lbCap.textContent = name;
-    lb.classList.add("is-open");
-    lb.setAttribute("aria-hidden", "false");
-    document.addEventListener("keydown", onKey); // bound on open, removed on close — no leak
-    lbClose.focus(); // move focus into the dialog
-  };
-  const close = () => {
-    lb.classList.remove("is-open");
-    lb.setAttribute("aria-hidden", "true");
-    lbImg.removeAttribute("src");
-    document.removeEventListener("keydown", onKey);
-    if (lastFocus) lastFocus.focus();
-  };
-
-  root.querySelectorAll("[data-full]").forEach((el) =>
-    el.addEventListener("click", () => { lastFocus = el; open(el.dataset.full, el.dataset.name); })
-  );
-  lbClose.addEventListener("click", close);
-  lb.addEventListener("click", (e) => { if (e.target === lb) close(); });
 }
 
 const DEMOS = {

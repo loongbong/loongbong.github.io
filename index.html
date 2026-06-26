@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=2" />
 </head>
 <body>
   <a class="skip-link" href="#projects">Skip to projects</a>
@@ -35,7 +35,8 @@
   <!-- Sticky condensed spectrum (revealed on scroll past hero) -->
   <header class="topbar" id="topbar" aria-hidden="true">
     <a class="topbar__mark" href="#top">Loong Bong</a>
-    <nav class="topbar__spectrum" id="sticky-spectrum" aria-label="Projects"></nav>
+    <span class="topbar__active mono" id="topbar-active"></span>
+    <nav class="topbar__spectrum" id="sticky-spectrum" aria-label="Jump to a section"></nav>
   </header>
 
   <main id="top">
@@ -59,18 +60,28 @@
       <div class="spectrum" id="spectrum" aria-label="Project spectrum, vibe-coded to rigorously engineered"></div>
     </section>
 
+    <!-- ABOUT: operator card, sits between the hero and the projects -->
+    <section class="about" id="about"></section>
+
     <!-- PROJECTS: one journey template per project, data-driven -->
     <div id="projects"></div>
-
-    <!-- ABOUT -->
-    <section class="about" id="about"></section>
   </main>
 
   <footer class="colophon" id="colophon"></footer>
 
-  <script src="js/data.js" defer></script>
-  <script src="js/render.js" defer></script>
-  <script src="js/demos.js" defer></script>
-  <script src="js/main.js" defer></script>
+  <!-- floating scroll affordances -->
+  <button class="scrollcue" id="scrollcue" type="button" aria-label="Continue to the next section" hidden>
+    <span class="scrollcue__txt mono">continue</span>
+    <span class="scrollcue__arrow" aria-hidden="true"></span>
+  </button>
+  <button class="totop" id="totop" type="button" aria-label="Back to top" hidden>
+    <span aria-hidden="true">↑</span>
+  </button>
+
+  <script src="js/data.js?v=2" defer></script>
+  <script src="js/render.js?v=2" defer></script>
+  <script src="js/demos.js?v=2" defer></script>
+  <script src="js/beats.js?v=2" defer></script>
+  <script src="js/main.js?v=2" defer></script>
 </body>
 </html>

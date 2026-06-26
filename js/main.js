@@ -17,25 +17,58 @@ function init() {
   spectrumNav();
   scrollSpy();
   stickyDock();
-  decisionTrees();
+  scrollAffordances();
+  if (typeof initBeats === "function") initBeats(); // builds + plays the instrument primitives + About
 }
 
-/* ---- decision tree (v1): hover/focus a branch to reveal that decision ---- */
-function decisionTrees() {
-  document.querySelectorAll(".dtree").forEach((tree) => {
-    const setActive = (i) => {
-      tree.querySelectorAll("[data-i]").forEach((el) =>
-        el.classList.toggle("is-active", el.dataset.i === String(i))
-      );
-    };
-    tree.querySelectorAll(".dtree__hit").forEach((hit) => {
-      const i = hit.dataset.i;
-      ["mouseenter", "focus", "click"].forEach((ev) => hit.addEventListener(ev, () => setActive(i)));
-      hit.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActive(i); }
-      });
-    });
+/* ---- floating scroll affordances: a "continue" cue that advances section-by-section,
+   a back-to-top button, and the sticky bar's active-section label ---- */
+function scrollAffordances() {
+  const cue = document.getElementById("scrollcue");
+  const toTop = document.getElementById("totop");
+  const activeLabel = document.getElementById("topbar-active");
+  const about = document.getElementById("about");
+  const projects = Array.from(document.querySelectorAll(".project[data-id]"));
+
+  const targets = [];
+  if (about) targets.push({ el: about, name: "About" });
+  projects.forEach((s) => {
+    const t = s.querySelector(".project__title");
+    targets.push({ el: s, name: (t && t.textContent) || s.dataset.id });
   });
+  if (!cue || !toTop || !targets.length) return;
+
+  const nextTarget = () => targets.find((t) => t.el.getBoundingClientRect().top > 120) || null;
+  const currentName = () => {
+    let cur = "";
+    targets.forEach((t) => { if (t.el.getBoundingClientRect().top <= 140) cur = t.name; });
+    return cur;
+  };
+
+  const update = () => {
+    const nxt = nextTarget();
+    const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 80;
+    cue.hidden = !nxt || nearBottom;
+    toTop.hidden = window.scrollY < window.innerHeight * 0.9;
+    if (activeLabel) activeLabel.textContent = currentName();
+  };
+
+  cue.addEventListener("click", () => {
+    const n = nextTarget();
+    if (n) n.el.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
+  });
+  toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: REDUCE ? "auto" : "smooth" }));
+
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { update(); ticking = false; });
+  }, { passive: true });
+  window.addEventListener("resize", update);
+
+  // reveal the cue only after the hero entrance has played ("after the landing animation")
+  setTimeout(update, REDUCE ? 0 : 2600);
 }
 
 /* ---- signature entrance: axis draws in, nodes ignite, hero settles ---- */

@@ -13,15 +13,15 @@ const SITE = {
   about:
     'Hi, I\'m Loong. I trained as a chemical engineer, and a scientific theory I came up with as an undergrad ' +
     'ended up published in <a href="https://doi.org/10.1039/D0PY01311K" target="_blank" rel="noopener"><em>Polymer Chemistry</em></a>, ' +
-    'cited 40+ times. I spent the next five years as an engineer at PETRONAS, where a Lean Six Sigma Green Belt ' +
-    'taught me how to systematically take a process apart, find where the value flows and blocks, improve on it, ' +
-    'and then make the fix last. Today I\'m in Strategy &amp; Transactions at EY-Parthenon, but outside of work I ' +
+    'cited 40+ times. I spent the next five years as an engineer at PETRONAS, where a <strong>Lean Six Sigma Green Belt</strong> ' +
+    'taught me how to systematically take a process apart, <span class="flow">find where the value flows and blocks, improve on it, ' +
+    'and then make the fix last</span>. Today I\'m in Strategy &amp; Transactions at EY-Parthenon, but outside of work I ' +
     'direct AI at the stuff I wish existed, and build it. I vibe-coded a live globe of a Web3 startup\'s node ' +
     'network that the startup adopted, now with 800+ monthly visitors. But for a personality app that\'s an ' +
     'ongoing passion project of mine, I\'m engineering it properly and carefully, with a full roadmap, highly ' +
     'detailed specs, and multiple review layers to ensure security (one of which caught a real security hole ' +
     'before launch). Everyone has the same access to these incredibly powerful AI tools, but having developed ' +
-    'judgement and taste, and knowing how much rigour each thing needs, is the differentiator.',
+    'judgement and taste, and <strong>knowing how much rigour each thing needs, is the differentiator</strong>.',
   rangeLine:
     'Outside the build: 20+ essays on personality psychology, and ' +
     '<a href="https://open.spotify.com/artist/3fAP8piejouPJKFnC5IJlu" target="_blank" rel="noopener">a song that once charted on national radio</a>.',
@@ -100,6 +100,23 @@ const PROJECTS = [
       "sits as-is. If I come back to it, I'd rebuild the core the way I now build anything meant to last: a written " +
       "spec before any code, layered reviews that go looking for what breaks, and a proper test suite. That's the " +
       "work that makes it safe to extend with alerting or per-node uptime history.",
+    stats: {
+      lead: 'first <b>100</b> operators on the network · first in <b>Malaysia</b>',
+      items: [
+        { field: "operators", val: 300, sfx: "+", label: "mapped on the live globe", icon: "network" },
+        { field: "monthly reach", val: 800, pfx: "~", label: "people come look", icon: "eye" },
+        { field: "coverage", val: 326, sfx: "k+", label: "IP-address ranges geolocated", icon: "globe" },
+        { field: "build cost", val: 250, pfx: "$", label: "in AI credits, total", icon: "coin" },
+      ],
+    },
+    hard: { attempt: "the attempt", problem: "context window fills, compacts", solution: "build in slices, hand-test each", goal: "holds together" },
+    traj: [
+      { lab: "now: ships as-is", now: true },
+      { lab: "a written spec" },
+      { lab: "layered reviews" },
+      { lab: "a real test suite" },
+      { lab: "alerting + uptime" },
+    ],
     demo: { type: "globe", src: "https://globe.wirwp.net" },
   },
 
@@ -144,6 +161,12 @@ const PROJECTS = [
       "a JSON export and import to move them by hand, which is the honest workaround for skipping a backend. The day " +
       "my crew wants one shared history across phones, that's when it earns a real server. For now, it settles who " +
       "actually won. That was the whole point.",
+    hard: { attempt: "push it live", problem: "breaks on the page, no idea why", solution: "learn how deploying works", goal: "app on the internet" },
+    traj: [
+      { lab: "now: shipped + exportable", now: true },
+      { lab: "a real server" },
+      { lab: "shared cross-phone history" },
+    ],
     demo: {
       type: "badminton",
       src: "https://loongbong.github.io/badminton-match-logger/",
@@ -205,12 +228,25 @@ const PROJECTS = [
       "a spike and a design, not a product. Honestly, I don't record enough meetings to justify finishing it just " +
       "for me. If I come back to it, it's because the local-only angle makes it worth turning into a small tool other " +
       "people could actually use.",
+    hard: { attempt: "average the two transcripts", problem: "the smooth one is the invented one", solution: "align, lean on the disagreements", goal: "trust it, or flag it" },
+    traj: [
+      { lab: "evaluation: done" },
+      { lab: "now: reconciler designed", now: true },
+      { lab: "build the reconciler" },
+      { lab: "a small local tool" },
+    ],
     demo: {
       type: "asr",
       reference:
         "Priya will coordinate the shipment to terminal KLG-7. The vendor quoted around 2,300 ringgit. [unclear]",
       caption:
         "Illustrative example. The failure modes are real; the sentence is invented. The original audio stays private.",
+      steps: [
+        "The reference is the ground truth: what was actually said. Watch how each model drifts from it.",
+        "Whisper is clean until a rough patch, then locks into a loop and repeats a phrase. A loud failure, easy to catch.",
+        "Qwen stays fluent but invents: it swaps a name for a brand it knows, and shifts a number's magnitude. The dangerous kind, because it reads as confident.",
+        "The arbiter aligns both transcripts in time and leans on the disagreements: it keeps the trustworthy reading, or flags the span as unclear instead of guessing.",
+      ],
       segments: [
         { kind: "name", ref: "Priya", whisper: "Priya", qwen: "Prada", verdict: "Priya",
           why: "Qwen swapped the name for a brand it recognised. Whisper held it. The arbiter keeps Whisper." },
@@ -284,14 +320,29 @@ const PROJECTS = [
       "It runs, and the numbers check out against the source. To make it genuinely hands-off I'd put it on a schedule " +
       "with alerting, so the day the portal changes its layout the run fails loudly and pings me instead of quietly " +
       "drifting. If I extended it, the audit trail is the part I'd never cut.",
+    stats: {
+      lead: 'a public bond portal, <b>one date at a time</b>, <b>two decades</b> deep',
+      items: [
+        { field: "observations", val: 160000, sfx: "+", label: "daily yield observations, audit-trailed", icon: "chart" },
+        { field: "provenance", val: 100, sfx: "%", label: "of figures hash-checked to source", icon: "check" },
+        { field: "maturities", val: 10, label: "yields captured per date", icon: "grid" },
+      ],
+    },
+    hard: { attempt: "lightweight scrapers", problem: "JS-rendered page, almost nothing", solution: "drive a real browser", goal: "sees what's on screen" },
+    traj: [
+      { lab: "now: runs + verified", now: true },
+      { lab: "scheduled + alerting" },
+      { lab: "fails loud on layout change" },
+      { lab: "hands-off archive" },
+    ],
     demo: {
       type: "pipeline",
       stages: [
-        { key: "listing", name: "Listing scrape", detail: "Walk the public portal's date index, resumable and rate-limited." },
-        { key: "detail", name: "Detail scrape", detail: "Fetch each date's yield page with backoff and retries." },
-        { key: "parse", name: "Parse to long", detail: "Reshape wide per-page tables into one row per date and maturity." },
-        { key: "build", name: "Build dataset", detail: "Assemble the tidy archive across the full date range." },
-        { key: "validate", name: "Validate + hash", detail: "Range-check every value, log provenance, write a hash manifest." },
+        { key: "listing", name: "Listing scrape", metric: "dates indexed", detail: "Walk the public portal's date index, resumable and rate-limited." },
+        { key: "detail", name: "Detail scrape", metric: "pages fetched", detail: "Fetch each date's yield page with backoff and retries." },
+        { key: "parse", name: "Parse to long", metric: "reshaped", detail: "Reshape wide per-page tables into one row per date and maturity." },
+        { key: "build", name: "Build dataset", metric: "one table", detail: "Assemble the tidy archive across the full date range." },
+        { key: "validate", name: "Validate + hash", metric: "hash ✓", detail: "Range-check every value, log provenance, write a hash manifest." },
       ],
       chart: {
         tenors: ["3M", "6M", "1Y", "3Y", "5Y", "7Y", "10Y", "15Y", "20Y", "30Y"],
@@ -371,6 +422,23 @@ const PROJECTS = [
       "the share cards, until each one is right. Before it goes live, the security review gets run again on the final " +
       "build, plus abuse monitoring on the auth and payment paths and a proper load test before it goes anywhere near " +
       "real cards.",
+    stats: {
+      lead: 'a login, card payments, personal results · <b>built careful from day one</b>',
+      items: [
+        { field: "the crew", val: 5, label: "characters, one per Big Five trait", icon: "crew" },
+        { field: "archetypes", val: 45, label: "portraits generated, 15 on show", icon: "grid" },
+        { field: "payment path", val: 3, label: "independent purchase confirmations", icon: "shield" },
+        { field: "security review", val: 1, label: "real hole caught before launch", icon: "bug" },
+      ],
+    },
+    hard: { attempt: "happy-path login redirect", problem: "open-redirect slips the slash check", solution: "reject sneaky cases, strip the token", goal: "caught before launch" },
+    traj: [
+      { lab: "built + tested" },
+      { lab: "now: redesign", now: true },
+      { lab: "re-run the security pass" },
+      { lab: "abuse monitoring + load test" },
+      { lab: "relaunch" },
+    ],
     demo: {
       type: "ocean",
       crew: "assets/ocean/crew-emma.webp",
