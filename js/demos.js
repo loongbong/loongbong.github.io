@@ -62,39 +62,35 @@ const DEMO_REDUCE = !!(window.matchMedia && window.matchMedia("(prefers-reduced-
 /* Lightweight HTML-preserving typewriter for the step copy (faster than the About bio).
    Wraps each character in a span and fades them in; colour from inline markup is kept.
    Cancellable (re-call to retype a new line); reduced-motion shows the text at once. */
+const TW_SPEED = 0.8; // matches the About bio cadence
+function twDelay(prev, next) {
+  let d = 15 + Math.random() * 16;
+  if (next === " ") d = 32 + Math.random() * 34;
+  if (/[.!?]/.test(prev)) d = 300 + Math.random() * 220;
+  else if (/[,;:]/.test(prev)) d = 160 + Math.random() * 140;
+  return d * TW_SPEED;
+}
+// cumulative reveal time (ms) per character index — bio cadence + pauses on punctuation
+function twSchedule(text) {
+  const times = new Array(text.length); let acc = 0;
+  for (let j = 0; j < text.length; j++) { if (j > 0) acc += twDelay(text[j - 1], text[j]); times[j] = acc; }
+  return times;
+}
+// reveal HTML at the bio cadence; returns total duration (ms). Re-call cancels the prior run.
 function typeHTML(el, html, onDone) {
   if (!el) { if (onDone) onDone(); return 0; }
   if (el._twRAF) { cancelAnimationFrame(el._twRAF); el._twRAF = null; }
   el.innerHTML = html;
   if (DEMO_REDUCE) { if (onDone) onDone(); return 0; }
-  const SPEED = 0.8; // matches the About bio cadence
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   const tns = []; let node; while ((node = walker.nextNode())) tns.push(node);
   const chars = [];
   tns.forEach((tn) => {
     const frag = document.createDocumentFragment();
-    for (const ch of tn.textContent) {
-      const s = document.createElement("span");
-      s.textContent = ch; s.style.opacity = "0";
-      frag.appendChild(s); chars.push(s);
-    }
+    for (const ch of tn.textContent) { const s = document.createElement("span"); s.textContent = ch; s.style.opacity = "0"; frag.appendChild(s); chars.push(s); }
     tn.replaceWith(frag);
   });
-  // cumulative reveal schedule with a human cadence + pauses on punctuation (as the bio)
-  const times = new Array(chars.length);
-  let acc = 0;
-  for (let j = 0; j < chars.length; j++) {
-    if (j > 0) {
-      const prev = chars[j - 1].textContent, next = chars[j].textContent;
-      let d = 15 + Math.random() * 16;
-      if (next === " ") d = 32 + Math.random() * 34;
-      if (/[.!?]/.test(prev)) d = 300 + Math.random() * 220;
-      else if (/[,;:]/.test(prev)) d = 160 + Math.random() * 140;
-      acc += d * SPEED;
-    }
-    times[j] = acc;
-  }
-  // time-based reveal (robust to sparse frames): show every char whose time has passed
+  const times = twSchedule(chars.map((c) => c.textContent).join(""));
   let i = 0, t0 = 0;
   const frame = (now) => {
     if (!t0) t0 = now;
@@ -104,7 +100,12 @@ function typeHTML(el, html, onDone) {
     else { el._twRAF = null; if (onDone) onDone(); }
   };
   el._twRAF = requestAnimationFrame(frame);
-  return acc;
+  return times.length ? times[times.length - 1] : 0;
+}
+// instantly finish an in-progress typeHTML on `el`; returns true if it was mid-type
+function snapType(el) {
+  if (el && el._twRAF) { cancelAnimationFrame(el._twRAF); el._twRAF = null; el.querySelectorAll("span").forEach((s) => (s.style.opacity = "1")); return true; }
+  return false;
 }
 
 /* shared: lazy-mount an iframe into a host wrapper once it scrolls near view */
@@ -257,7 +258,11 @@ function demoAsr(demoEl, project) {
 
   const cueEl = root.querySelector("[data-cue]");
   const dismissCue = () => { stepBtn.classList.remove("chip-btn--cue"); if (cueEl) cueEl.classList.add("is-dismissed"); };
-  stepBtn.addEventListener("click", () => { dismissCue(); if (stage < rows.length - 1) { stage++; applyStage(); } });
+  stepBtn.addEventListener("click", () => {
+    dismissCue();
+    if (snapType(callout)) return; // mid-type: finish the current line first, then advance on the next click
+    if (stage < rows.length - 1) { stage++; applyStage(); }
+  });
   root.querySelector('[data-act="restart"]').addEventListener("click", () => { stage = 0; applyStage(); clearActive(); });
   segs.forEach((sg) =>
     ["mouseenter", "focus", "click"].forEach((ev) => sg.addEventListener(ev, () => setActiveSeg(sg.dataset.seg)))
@@ -388,11 +393,9 @@ function demoPipeline(demoEl, project) {
   };
 
   let running = false;
-  const showDetail = (i, animate, onDone) => {
-    const txt = `0${Number(i) + 1} · ${d.stages[i].detail}`;
-    if (animate && !DEMO_REDUCE) return typeHTML(detail, txt, onDone);
+  const showDetail = (i) => {
     if (detail._twRAF) { cancelAnimationFrame(detail._twRAF); detail._twRAF = null; }
-    detail.textContent = txt; if (onDone) onDone(); return 0;
+    detail.textContent = `0${Number(i) + 1} · ${d.stages[i].detail}`;
   };
   stageEls.forEach((el) => {
     const i = el.dataset.i;
@@ -435,46 +438,49 @@ function demoPipeline(demoEl, project) {
     if (ychart) ychart.classList.add("is-run");
     drawChart(0);
     status.textContent = "scraping the portal, one date at a time…";
+
     const N = stageEls.length, readHold = 750;
+    // The total run is sized to the copy: each stage = its copy's bio-cadence typing time
+    // + a short read-hold. The counter / bar / chart then animate SMOOTHLY and continuously
+    // across that whole total (never stepping), while the stage copy types within its window.
+    const texts = d.stages.map((s, i) => `0${i + 1} · ${s.detail}`);
+    const scheds = texts.map(twSchedule);
+    const dur = scheds.map((t) => (t.length ? t[t.length - 1] : 0));
+    const starts = []; let accT = 0;
+    for (let i = 0; i < N; i++) { starts.push(accT); accT += dur[i] + readHold; }
+    const TOTAL = accT;
 
-    // ease the counter / bar / chart from a -> b over ms
-    const tween = (a, b, ms) => {
-      const t0 = performance.now();
-      const step = (now) => {
-        const p = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - p, 2);
-        const v = a + (b - a) * e;
-        setProgress(v); drawChart(v);
-        if (p < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
+    let lit = -1, curSpans = null, curTimes = null, curStart = 0, t0 = 0;
+    const renderStageCopy = (k) => {
+      detail.textContent = ""; curSpans = [];
+      for (const ch of texts[k]) { const s = document.createElement("span"); s.textContent = ch; s.style.opacity = "0"; detail.appendChild(s); curSpans.push(s); }
+      curTimes = scheds[k]; curStart = starts[k];
     };
-
-    // the step copy dictates the pace: each stage advances only once its copy has typed
-    // (at the bio cadence) and a short read-hold passes. The whole run is as long as the
-    // copy needs — not forced into a fixed per-stage dwell.
-    let k = 0;
-    const runStage = () => {
-      stageEls.forEach((s) => s.classList.toggle("is-hot", Number(s.dataset.i) === k));
-      const dur = showDetail(k, true, () => {
-        setTimeout(() => {
-          stageEls[k].classList.remove("is-hot");
-          stageEls[k].classList.add("is-done");
-          if (connEls[k]) connEls[k].classList.add("is-done");
-          k++;
-          if (k < N) runStage();
-          else {
-            setProgress(1); drawChart(1);
-            manifest.hidden = false;
-            status.textContent = "✓ 160,000+ observations · manifest verified";
-            if (toasts[0]) toasts[0].classList.add("is-show");
-            if (toasts[1]) setTimeout(() => toasts[1].classList.add("is-show"), 500);
-            running = false;
-          }
-        }, readHold);
-      });
-      tween(k / N, (k + 1) / N, Math.max(500, dur)); // counter climbs while the copy types
+    const tick = (now) => {
+      if (!t0) t0 = now;
+      const elapsed = now - t0;
+      let idx = 0; for (let j = 0; j < N; j++) if (elapsed >= starts[j]) idx = j;
+      if (idx !== lit) {
+        for (let j = Math.max(0, lit); j < idx; j++) { stageEls[j].classList.remove("is-hot"); stageEls[j].classList.add("is-done"); if (connEls[j]) connEls[j].classList.add("is-done"); }
+        stageEls[idx].classList.add("is-hot");
+        renderStageCopy(idx);
+        lit = idx;
+      }
+      if (curSpans) { const local = elapsed - curStart; for (let i = 0; i < curSpans.length; i++) if (curTimes[i] <= local) curSpans[i].style.opacity = "1"; }
+      const p = Math.min(1, elapsed / TOTAL), e = 1 - Math.pow(1 - p, 1.6);
+      setProgress(e); drawChart(e);
+      if (elapsed < TOTAL) { requestAnimationFrame(tick); return; }
+      stageEls[N - 1].classList.remove("is-hot"); stageEls[N - 1].classList.add("is-done");
+      if (connEls[N - 1]) connEls[N - 1].classList.add("is-done");
+      if (curSpans) curSpans.forEach((s) => (s.style.opacity = "1"));
+      setProgress(1); drawChart(1);
+      manifest.hidden = false;
+      status.textContent = "✓ 160,000+ observations · manifest verified";
+      if (toasts[0]) toasts[0].classList.add("is-show");
+      if (toasts[1]) setTimeout(() => toasts[1].classList.add("is-show"), 500);
+      running = false;
     };
-    runStage();
+    requestAnimationFrame(tick);
   };
   root.querySelector('[data-act="run"]').addEventListener("click", run);
 
