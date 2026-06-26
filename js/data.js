@@ -245,9 +245,9 @@ const PROJECTS = [
         "Illustrative example. The failure modes are real; the sentence is invented. The original audio stays private.",
       steps: [
         "The reference is the ground truth: what was actually said. Step through to watch each model drift from it.",
-        "Whisper is clean until a rough patch, then locks into a loop and repeats a phrase (the orange spans). A loud failure, easy to catch.",
-        "Qwen stays fluent but invents: a name becomes a brand, a number shifts tenfold (the purple spans). The dangerous kind, because it reads as confident.",
-        "The arbiter leans on the disagreements: it keeps the trustworthy reading (green) and flags what neither earns (dashed) instead of guessing.",
+        'Whisper is clean until a rough patch, then locks into a loop and <span class="asr-hl asr-hl--whisper">repeats a phrase</span>. A loud failure, easy to catch.',
+        'Qwen stays fluent but invents: <span class="asr-hl asr-hl--qwen">a name becomes a brand</span>, <span class="asr-hl asr-hl--qwen">a number shifts tenfold</span>. The dangerous kind, because it reads as confident.',
+        'The arbiter keeps the <span class="asr-hl asr-hl--pick">trustworthy reading</span> and <span class="asr-hl asr-hl--flag">flags what neither earns</span> instead of guessing.',
       ],
       segments: [
         { kind: "name", ref: "Priya", whisper: "Priya", qwen: "Prada", verdict: "Priya",

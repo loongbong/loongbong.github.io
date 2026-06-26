@@ -59,6 +59,39 @@ function demoGlobe(demoEl, project) {
 
 const DEMO_REDUCE = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
+/* Lightweight HTML-preserving typewriter for the step copy (faster than the About bio).
+   Wraps each character in a span and fades them in; colour from inline markup is kept.
+   Cancellable (re-call to retype a new line); reduced-motion shows the text at once. */
+function typeHTML(el, html, speed) {
+  if (!el) return;
+  if (el._twRAF) { cancelAnimationFrame(el._twRAF); el._twRAF = null; }
+  el.innerHTML = html;
+  if (DEMO_REDUCE) return;
+  speed = speed || 14; // ms per character
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const tns = []; let node; while ((node = walker.nextNode())) tns.push(node);
+  const chars = [];
+  tns.forEach((tn) => {
+    const frag = document.createDocumentFragment();
+    for (const ch of tn.textContent) {
+      const s = document.createElement("span");
+      s.textContent = ch; s.style.opacity = "0";
+      frag.appendChild(s); chars.push(s);
+    }
+    tn.replaceWith(frag);
+  });
+  // time-based reveal: reveal every char whose scheduled time has passed, so it stays
+  // correct even when frames are sparse (no slow per-timer crawl).
+  let i = 0, t0 = 0;
+  const frame = (now) => {
+    if (!t0) t0 = now;
+    const target = Math.floor((now - t0) / speed);
+    while (i < chars.length && i <= target) { chars[i].style.opacity = "1"; i++; }
+    el._twRAF = i < chars.length ? requestAnimationFrame(frame) : null;
+  };
+  el._twRAF = requestAnimationFrame(frame);
+}
+
 /* shared: lazy-mount an iframe into a host wrapper once it scrolls near view */
 function mountLazyIframe(host, src, title) {
   let loaded = false;
@@ -193,7 +226,7 @@ function demoAsr(demoEl, project) {
       el.querySelectorAll(".seg").forEach((sg) => { sg.tabIndex = shown ? 0 : -1; });
     });
     stageLabel.textContent = stageNames[stage];
-    if (callout) { callout.textContent = steps[stage] || ""; }
+    if (callout) typeHTML(callout, steps[stage] || "", 13);
     stepBtn.disabled = stage >= rows.length - 1;
   };
 
@@ -340,7 +373,11 @@ function demoPipeline(demoEl, project) {
   };
 
   let running = false, raf = null;
-  const showDetail = (i) => { detail.textContent = `0${Number(i) + 1} · ${d.stages[i].detail}`; };
+  const showDetail = (i, animate) => {
+    const txt = `0${Number(i) + 1} · ${d.stages[i].detail}`;
+    if (animate && !DEMO_REDUCE) typeHTML(detail, txt, 11);
+    else { if (detail._twRAF) { cancelAnimationFrame(detail._twRAF); detail._twRAF = null; } detail.textContent = txt; }
+  };
   stageEls.forEach((el) => {
     const i = el.dataset.i;
     ["mouseenter", "focus", "click"].forEach((ev) =>
@@ -400,7 +437,7 @@ function demoPipeline(demoEl, project) {
             if (connEls[k - 1]) connEls[k - 1].classList.add("is-done");
           }
           stageEls[k].classList.add("is-hot");
-          showDetail(k);
+          showDetail(k, true);
         }
         lit = idx;
       }

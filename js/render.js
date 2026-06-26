@@ -274,7 +274,7 @@ function renderColophon() {
     .join("");
   $("#colophon").innerHTML = `
     <div class="colophon__cta">
-      <p class="colophon__line">Five projects, five different calls on how much rigour each one needed. The tools are the same every time; the judgement of how far to push them isn't.</p>
+      <p class="colophon__line">These five are a sample of what I'm building. Each is its own call on how much rigour it needs: the tools are the same every time, the judgement of how far to push them isn't.</p>
       <nav class="colophon__links" aria-label="Profiles and links">${links}</nav>
     </div>
     <div class="colophon__meta mono">
