@@ -199,26 +199,42 @@
     const p = projectOf(root), T = (p && p.traj) || [];
     const svg = $(".traj__svg", root), N = T.length;
     if (!N) return;
-    const W = 660, H = 220, padL = 50, padR = 55, yTop = 52, yBot = 166;
+    const W = 660, H = 252, padL = 72, padR = 72, yTop = 60, yBot = 170;
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     const xs = T.map((_, i) => (N === 1 ? W / 2 : padL + (W - padL - padR) * (i / (N - 1))));
     const ys = T.map((_, i) => (N === 1 ? (yTop + yBot) / 2 : yBot - (yBot - yTop) * (i / (N - 1))));
     let nowI = T.findIndex((t) => t.now); if (nowI < 0) nowI = 0;
 
-    svg.appendChild(el("line", { class: "traj__base", x1: 40, y1: 188, x2: 620, y2: 188 }));
-    svg.appendChild(el("text", { class: "traj__axis", x: 40, y: 208 }, "less rigour"));
-    const ax = el("text", { class: "traj__axis", x: 620, y: 208 }, "more rigour"); ax.setAttribute("text-anchor", "end"); svg.appendChild(ax);
+    svg.appendChild(el("line", { class: "traj__base", x1: 40, y1: 202, x2: 620, y2: 202 }));
+    svg.appendChild(el("text", { class: "traj__axis", x: 40, y: 222 }, "less rigour"));
+    const ax = el("text", { class: "traj__axis", x: 620, y: 222 }, "more rigour"); ax.setAttribute("text-anchor", "end"); svg.appendChild(ax);
 
     const seg = (a, b) => { let d = `M ${xs[a]} ${ys[a]}`; for (let i = a + 1; i <= b; i++) d += ` L ${xs[i]} ${ys[i]}`; return d; };
     if (nowI >= 1) svg.appendChild(el("path", { class: "traj__solid", pathLength: 1, d: seg(0, nowI) }));
     else svg.appendChild(el("path", { class: "traj__solid", pathLength: 1, d: `M ${xs[0] - 18} ${ys[0]} L ${xs[0]} ${ys[0]}` }));
     if (nowI < N - 1) svg.appendChild(el("path", { class: "traj__proj", d: seg(nowI, N - 1) }));
 
+    // wrap long labels onto two balanced lines so they don't overlap neighbours or clip at the edges
+    const wrapLab = (s) => {
+      if (s.length <= 15) return [s];
+      const words = s.split(" ");
+      if (words.length === 1) return [s];
+      let best = [s], bestDiff = Infinity;
+      for (let k = 1; k < words.length; k++) {
+        const a = words.slice(0, k).join(" "), b = words.slice(k).join(" ");
+        const diff = Math.abs(a.length - b.length);
+        if (diff < bestDiff) { bestDiff = diff; best = [a, b]; }
+      }
+      return best;
+    };
+    const LH = 14;
     T.forEach((t, i) => {
       svg.appendChild(el("circle", { class: "traj__dot" + (t.now ? " is-now" : ""), "data-i": i, cx: xs[i], cy: ys[i], r: t.now ? 8 : 6 }));
-      const above = i % 2 === 0, ly = above ? ys[i] - 16 : ys[i] + 28;
-      const tx = el("text", { class: "traj__lab" + (t.now ? " is-now" : ""), "data-i": i, x: xs[i], y: ly }, t.lab);
+      const above = i % 2 === 0, lines = wrapLab(t.lab);
+      const y0 = above ? ys[i] - 18 - (lines.length - 1) * LH : ys[i] + 30;
+      const tx = el("text", { class: "traj__lab" + (t.now ? " is-now" : ""), "data-i": i, x: xs[i], y: y0 });
       tx.setAttribute("text-anchor", i === 0 ? "start" : i === N - 1 ? "end" : "middle");
+      lines.forEach((ln, k) => tx.appendChild(el("tspan", { x: xs[i], dy: k === 0 ? 0 : LH }, ln)));
       svg.appendChild(tx);
     });
   }

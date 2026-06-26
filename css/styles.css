@@ -437,7 +437,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .traj.is-in .traj__dot[data-i="2"] { transition-delay: 2.3s; }
 .traj.is-in .traj__dot[data-i="3"] { transition-delay: 3s; }
 .traj.is-in .traj__dot[data-i="4"] { transition-delay: 3.7s; }
-.traj__lab { font-family: var(--mono); font-size: 13px; fill: var(--text-dim); text-anchor: middle; opacity: 0; transition: opacity 0.6s ease; }
+.traj__lab { font-family: var(--mono); font-size: 12px; fill: var(--text-dim); text-anchor: middle; opacity: 0; transition: opacity 0.6s ease; }
 .traj__lab.is-now { fill: var(--accent); }
 .traj.is-in .traj__lab { opacity: 1; }
 .traj.is-in .traj__lab[data-i="0"] { transition-delay: 0.6s; }

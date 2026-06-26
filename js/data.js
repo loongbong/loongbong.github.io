@@ -67,7 +67,7 @@ const PROJECTS = [
         choice: "Crawl the whole network, not just the startup's seed nodes",
         alt: "read the seed nodes and call it a day, like most monitors",
         why:
-          "I had the backend visit every node it found, then ask that node who its neighbours were, and on and on" +
+          "I had the backend visit every node it found, then ask that node who its neighbours were, and on and on " +
           "until nothing new turned up. That drew a fuller map than the seed nodes alone, and it geolocates " +
           "each node by IP against a database of roughly 326,000 ranges. The full picture also shows how many peers " +
           "can actually see each node, so the isolated ones stick out.",
@@ -209,7 +209,7 @@ const PROJECTS = [
           "arbiter that takes the trustworthy reading at each disagreement, or flags it as unclear instead of guessing.",
       },
       {
-        choice: "Run everything locally on my own Macs",
+        choice: "Run everything locally on my own Mac",
         alt: "a cloud transcription API",
         why:
           "The audio is sensitive, so I didn't want it leaving my machine. Local costs nothing per hour, and it let " +
@@ -417,8 +417,8 @@ const PROJECTS = [
       "into anyone's account. But on a login page, that's exactly the kind of thing a pre-launch review exists to catch.",
     next:
       "It's built and tested, but offline right now because I'm redoing the look. When GPT Image 2.0 came out I could " +
-      "see how much better the whole thing could be, and since this is a project I actually care about, I'd rather " +
-      "take the time to get the design right. I'm regenerating the art one piece at a time, down to the backdrop motifs on " +
+      "see how much better the whole thing could be, so I'd rather take the time to get the design right. " +
+      "I'm regenerating the art one piece at a time, down to the backdrop motifs on " +
       "the share cards, until each one is right. Before it goes live, the security review gets run again on the final " +
       "build, plus abuse monitoring on the auth and payment paths and a proper load test before it goes anywhere near " +
       "real cards.",
