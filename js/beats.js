@@ -35,12 +35,14 @@
       if (RM()) { numEl.textContent = fmt(to, dec); return; }
       const stat = numEl.closest(".stat");
       if (stat) stat.classList.add("is-live");
+      if (numEl._raf) cancelAnimationFrame(numEl._raf);
+      if (numEl._liveT) clearTimeout(numEl._liveT);
       const dur = 2200, t0 = performance.now();
       (function frame(t) {
         const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
         numEl.textContent = fmt(to * e, dec);
-        if (p < 1) requestAnimationFrame(frame);
-        else { numEl.textContent = fmt(to, dec); if (stat) setTimeout(() => stat.classList.remove("is-live"), 500); }
+        if (p < 1) numEl._raf = requestAnimationFrame(frame);
+        else { numEl._raf = null; numEl.textContent = fmt(to, dec); if (stat) numEl._liveT = setTimeout(() => stat.classList.remove("is-live"), 500); }
       })(t0);
     });
   }
@@ -298,7 +300,7 @@
       if (i >= chars.length) { finish(); return; }
       timer = setTimeout(step, delayAfter(typed, chars[i].textContent));
     }
-    function start() { running = true; toggleBtn.disabled = false; toggleBtn.textContent = "⏸ pause"; step(); }
+    function start() { if (running) return; running = true; toggleBtn.disabled = false; toggleBtn.textContent = "⏸ pause"; step(); }
     function pause() { if (!running) return; running = false; clearTimeout(timer); toggleBtn.textContent = "▶ resume"; }
     function resume() { if (running || i >= chars.length) return; running = true; toggleBtn.textContent = "⏸ pause"; step(); }
     function skip() { running = false; clearTimeout(timer); for (; i < chars.length; i++) chars[i].classList.add("shown"); finish(); }
@@ -306,8 +308,9 @@
     function replay() { reset(); start(); }
     function showAll() { running = false; clearTimeout(timer); chars.forEach((c) => { c.classList.add("shown"); c.classList.remove("tw-cursor"); }); lastCur = -1; i = chars.length; if (extras) extras.classList.add("shown"); }
     toggleBtn.addEventListener("click", () => { if (toggleBtn.disabled) return; running ? pause() : resume(); });
-    $('[data-act="skip"]').addEventListener("click", skip);
-    $('[data-act="replay"]').addEventListener("click", replay);
+    const skipBtn = $('[data-act="skip"]'), replayBtn = $('[data-act="replay"]');
+    if (skipBtn) skipBtn.addEventListener("click", skip);
+    if (replayBtn) replayBtn.addEventListener("click", replay);
     return { start, showAll, reset, replay };
   }
 

@@ -292,7 +292,7 @@ const PROJECTS = [
           "the dataset.",
       },
       {
-        choice: "Make the pipeline prove itself, not just spit out a spreadsheet",
+        choice: "Make the pipeline prove itself, every run",
         alt: "scrape it, dump a CSV, call it done",
         why:
           "A scraper that returns plausible-looking numbers is more dangerous than one that crashes, because nobody " +
@@ -382,7 +382,7 @@ const PROJECTS = [
           "the validation and structure that implies, not a pretty shell I'd have to make safe later.",
       },
       {
-        choice: "Build it to grow, not just to work",
+        choice: "Build it to grow from day one",
         alt: "make it work now and deal with the mess when I revisit it",
         why:
           "I have a roadmap for this one, so it can't be code that runs fine until you reopen it to add a feature and " +
