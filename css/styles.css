@@ -506,8 +506,8 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
   color: var(--text-faint); transition: opacity 0.5s ease;
 }
 .globe-embed__title { color: var(--text-dim); font-size: 0.82rem; letter-spacing: 0.1em; }
-.globe-embed__hint { font-size: 0.72rem; font-family: var(--mono); }
-.globe-note { margin: 0 0 0.8rem; font-size: 0.72rem; line-height: 1.5; color: var(--text-dim); border: 1px solid color-mix(in srgb, var(--warm) 30%, var(--line)); border-left: 2px solid var(--warm); border-radius: 8px; padding: 0.55rem 0.75rem; background: color-mix(in srgb, var(--warm) 6%, var(--bg)); }
+.globe-embed__hint { font-size: 0.76rem; font-family: var(--mono); }
+.globe-note { margin: 0 0 0.8rem; font-size: 0.78rem; line-height: 1.5; color: var(--text-dim); border: 1px solid color-mix(in srgb, var(--warm) 30%, var(--line)); border-left: 2px solid var(--warm); border-radius: 8px; padding: 0.55rem 0.75rem; background: color-mix(in srgb, var(--warm) 6%, var(--bg)); }
 .globe-note b { color: var(--text); font-weight: 500; }
 /* sized at 1/0.55 then scaled to 0.55 => content renders ~55% zoom (wider view), fills the frame */
 .globe-embed__frame {
@@ -548,7 +548,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .viz-cue { color: var(--accent); font-size: 0.74rem; letter-spacing: 0.04em; opacity: 0.85; transition: opacity 0.45s ease; }
 .viz-cue.is-dismissed { opacity: 0; pointer-events: none; }
 
-.demo-caption { padding: 0.7rem 0.9rem 0; color: var(--text-faint); font-size: 0.76rem; letter-spacing: 0.03em; line-height: 1.55; }
+.demo-caption { padding: 0.7rem 0.9rem 0; color: var(--text-dim); font-size: 0.84rem; letter-spacing: 0.03em; line-height: 1.55; }
 
 /* generic lazy iframe embed (badminton) */
 .embed {
@@ -561,14 +561,14 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
   color: var(--text-faint); transition: opacity 0.5s ease;
 }
 .embed__title { color: var(--text-dim); font-size: 0.82rem; letter-spacing: 0.1em; }
-.embed__hint { font-size: 0.72rem; font-family: var(--mono); }
+.embed__hint { font-size: 0.76rem; font-family: var(--mono); }
 .embed__frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity 0.6s ease; }
 .embed.is-loaded .embed__frame { opacity: 1; }
 .embed.is-loaded .embed__poster { opacity: 0; pointer-events: none; }
 .embed-foot {
   display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; justify-content: space-between; align-items: center;
   padding: 0.6rem 0.9rem; border-top: 1px solid var(--line);
-  font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.04em;
+  font-size: 0.78rem; color: var(--text-dim); letter-spacing: 0.04em;
 }
 .embed-foot a { color: var(--accent); }
 .embed-foot a:hover { text-decoration: underline; }
@@ -681,7 +681,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
    ocean demo — two mobile screenshots (phone frames) + portrait strip
    ========================================================================= */
 .ocean { padding: 1rem; }
-.ocean__gallerylabel { margin: 1.2rem 0 0.8rem; color: var(--text-faint); font-size: 0.7rem; letter-spacing: 0.08em; }
+.ocean__gallerylabel { margin: 1.2rem 0 0.8rem; color: var(--text-dim); font-size: 0.78rem; letter-spacing: 0.08em; }
 /* portrait strip — horizontally scrollable, non-interactive (no enlarge) */
 .ocean__strip { display: flex; gap: 0.7rem; overflow-x: auto; padding: 0.2rem 0.1rem 0.7rem; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
 .ocean__strip::-webkit-scrollbar { height: 7px; }
@@ -696,7 +696,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
   width: 100%; max-width: 66px; aspect-ratio: 1; object-fit: cover; border-radius: 50%;
   border: 2px solid color-mix(in srgb, var(--accent) 45%, var(--line)); background: var(--bg-2);
 }
-.ocean__thumbname { font-size: 0.6rem; color: var(--text-faint); letter-spacing: 0.02em; text-align: center; line-height: 1.2; }
+.ocean__thumbname { font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.02em; text-align: center; line-height: 1.25; }
 
 @media (prefers-reduced-motion: reduce) {
   .asr-row, .pipe__stage, .pipe__conn, .seg, .embed__frame, .embed__poster, .ocean__thumb {
