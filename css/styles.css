@@ -778,18 +778,18 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
   max-width: var(--maxw); margin-inline: auto;
 }
 .colophon__cta {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: 1.3rem 2.5rem; padding-bottom: 2rem; margin-bottom: 1.6rem; border-bottom: 1px solid var(--line-soft);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 1.5rem; padding-bottom: 2.2rem; margin-bottom: 1.6rem; border-bottom: 1px solid var(--line-soft);
 }
-.colophon__line { font-size: 1.05rem; line-height: 1.55; color: var(--text-dim); max-width: 44ch; margin: 0; }
-.colophon__links { display: flex; flex-wrap: wrap; gap: 1.3rem; }
+.colophon__line { font-size: 1.1rem; line-height: 1.6; color: var(--text-dim); max-width: 58ch; margin: 0; }
+.colophon__links { display: flex; flex-wrap: wrap; gap: 1.3rem; justify-content: center; }
 .colophon__links a {
   font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em; color: var(--text);
   border-bottom: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); padding-bottom: 2px;
   transition: color 0.15s, border-color 0.15s;
 }
 .colophon__links a:hover { color: var(--accent); border-color: var(--accent); }
-.colophon__meta { display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; font-family: var(--mono); font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.05em; }
+.colophon__meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem 2rem; font-family: var(--mono); font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.05em; }
 
 /* =========================================================================
    Motion — entrance + scroll-reveal. All gated by prefers-reduced-motion.
