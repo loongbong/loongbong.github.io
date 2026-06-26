@@ -666,11 +666,9 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 @keyframes ydraw { to { stroke-dashoffset: 0; } }
 
 /* =========================================================================
-   ocean demo — crew screenshot + portrait lightbox gallery
+   ocean demo — two mobile screenshots (phone frames) + portrait strip
    ========================================================================= */
 .ocean { padding: 1rem; }
-.ocean__shot { display: block; width: 100%; overflow: hidden; background: var(--bg); }
-.ocean__shot img { display: block; width: 100%; height: auto; }
 .ocean__gallerylabel { margin: 1.2rem 0 0.8rem; color: var(--text-faint); font-size: 0.7rem; letter-spacing: 0.08em; }
 /* portrait strip — horizontally scrollable, non-interactive (no enlarge) */
 .ocean__strip { display: flex; gap: 0.7rem; overflow-x: auto; padding: 0.2rem 0.1rem 0.7rem; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
@@ -688,27 +686,8 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 }
 .ocean__thumbname { font-size: 0.6rem; color: var(--text-faint); letter-spacing: 0.02em; text-align: center; line-height: 1.2; }
 
-.lightbox {
-  position: fixed; inset: 0; z-index: 90; display: none; align-items: center; justify-content: center; padding: 5vw;
-  background: color-mix(in srgb, #000 80%, transparent); backdrop-filter: blur(6px);
-}
-.lightbox.is-open { display: flex; }
-.lightbox__close {
-  position: absolute; top: 1.1rem; right: 1.2rem; width: 40px; height: 40px; border-radius: 50%;
-  border: 1px solid var(--line); background: var(--bg-1); color: var(--text); font-size: 1rem; cursor: pointer; transition: background 0.2s;
-}
-.lightbox__close:hover { background: var(--bg-2); }
-.lightbox__fig { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; max-width: min(860px, 92vw); }
-.lightbox__img { max-width: 100%; max-height: 74vh; width: auto; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-1); }
-.lightbox__cap { color: var(--text-dim); font-size: 0.78rem; letter-spacing: 0.06em; }
-
-@media (prefers-reduced-motion: no-preference) {
-  .lightbox.is-open { animation: lbin 0.2s var(--ease); }
-}
-@keyframes lbin { from { opacity: 0; } to { opacity: 1; } }
-
 @media (prefers-reduced-motion: reduce) {
-  .asr-row, .pipe__stage, .pipe__conn, .seg, .embed__frame, .embed__poster, .ocean__thumb, .ocean__shot {
+  .asr-row, .pipe__stage, .pipe__conn, .seg, .embed__frame, .embed__poster, .ocean__thumb {
     transition: none !important; animation: none !important;
   }
   .asr-row { opacity: 1; transform: none; }
@@ -881,16 +860,6 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .ocean__phone .demo-caption { max-width: 360px; text-align: center; margin: 0; }
 
 /* browser frame — OCEAN (offline, desktop screenshot) */
-.browser { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--bg-1); }
-.browser__bar { display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--cool) 5%, var(--bg-1)); }
-.browser__dots { display: inline-flex; gap: 0.35rem; flex: 0 0 auto; }
-.browser__dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
-.browser__dots i:nth-child(1) { background: color-mix(in srgb, #f0532e 60%, var(--line)); }
-.browser__dots i:nth-child(2) { background: color-mix(in srgb, #f5933f 60%, var(--line)); }
-.browser__dots i:nth-child(3) { background: color-mix(in srgb, #55bacc 60%, var(--line)); }
-.browser__url { flex: 1; text-align: center; font-size: 0.68rem; letter-spacing: 0.04em; color: var(--text-faint); background: var(--bg); border-radius: 6px; padding: 0.25rem 0.7rem; }
-.browser .ocean__shot { border: 0; border-radius: 0; }
-.browser .ocean__shot:hover, .browser .ocean__shot:focus-visible { border: 0; }
 
 /* asr step callout */
 .asr__callout { display: flex; gap: 0.6rem; align-items: flex-start; margin: 0 0 1rem; padding: 0.75rem 0.85rem; background: color-mix(in srgb, var(--accent) 6%, var(--bg)); border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); border-left: 2px solid var(--accent); border-radius: 8px; min-height: 2.6rem; transition: background 0.3s; }

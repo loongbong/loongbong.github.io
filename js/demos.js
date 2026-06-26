@@ -413,7 +413,7 @@ function demoPipeline(demoEl, project) {
   if (DEMO_REDUCE) finalState();
 }
 
-/* ---- ocean: crew screenshot (browser frame) + a horizontally-scrollable portrait strip ---- */
+/* ---- ocean: two live mobile screenshots (phone frames) + a horizontally-scrollable portrait strip ---- */
 function demoOcean(demoEl, project) {
   const d = project.demo;
   const bar = demoEl.querySelector(".demo__bar");
