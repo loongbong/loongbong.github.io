@@ -62,12 +62,12 @@ const DEMO_REDUCE = !!(window.matchMedia && window.matchMedia("(prefers-reduced-
 /* Lightweight HTML-preserving typewriter for the step copy (faster than the About bio).
    Wraps each character in a span and fades them in; colour from inline markup is kept.
    Cancellable (re-call to retype a new line); reduced-motion shows the text at once. */
-function typeHTML(el, html, speed) {
-  if (!el) return;
+function typeHTML(el, html, onDone) {
+  if (!el) { if (onDone) onDone(); return 0; }
   if (el._twRAF) { cancelAnimationFrame(el._twRAF); el._twRAF = null; }
   el.innerHTML = html;
-  if (DEMO_REDUCE) return;
-  speed = speed || 14; // ms per character
+  if (DEMO_REDUCE) { if (onDone) onDone(); return 0; }
+  const SPEED = 0.8; // matches the About bio cadence
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   const tns = []; let node; while ((node = walker.nextNode())) tns.push(node);
   const chars = [];
@@ -80,16 +80,31 @@ function typeHTML(el, html, speed) {
     }
     tn.replaceWith(frag);
   });
-  // time-based reveal: reveal every char whose scheduled time has passed, so it stays
-  // correct even when frames are sparse (no slow per-timer crawl).
+  // cumulative reveal schedule with a human cadence + pauses on punctuation (as the bio)
+  const times = new Array(chars.length);
+  let acc = 0;
+  for (let j = 0; j < chars.length; j++) {
+    if (j > 0) {
+      const prev = chars[j - 1].textContent, next = chars[j].textContent;
+      let d = 15 + Math.random() * 16;
+      if (next === " ") d = 32 + Math.random() * 34;
+      if (/[.!?]/.test(prev)) d = 300 + Math.random() * 220;
+      else if (/[,;:]/.test(prev)) d = 160 + Math.random() * 140;
+      acc += d * SPEED;
+    }
+    times[j] = acc;
+  }
+  // time-based reveal (robust to sparse frames): show every char whose time has passed
   let i = 0, t0 = 0;
   const frame = (now) => {
     if (!t0) t0 = now;
-    const target = Math.floor((now - t0) / speed);
-    while (i < chars.length && i <= target) { chars[i].style.opacity = "1"; i++; }
-    el._twRAF = i < chars.length ? requestAnimationFrame(frame) : null;
+    const elapsed = now - t0;
+    while (i < chars.length && times[i] <= elapsed) { chars[i].style.opacity = "1"; i++; }
+    if (i < chars.length) el._twRAF = requestAnimationFrame(frame);
+    else { el._twRAF = null; if (onDone) onDone(); }
   };
   el._twRAF = requestAnimationFrame(frame);
+  return acc;
 }
 
 /* shared: lazy-mount an iframe into a host wrapper once it scrolls near view */
@@ -226,7 +241,7 @@ function demoAsr(demoEl, project) {
       el.querySelectorAll(".seg").forEach((sg) => { sg.tabIndex = shown ? 0 : -1; });
     });
     stageLabel.textContent = stageNames[stage];
-    if (callout) typeHTML(callout, steps[stage] || "", 13);
+    if (callout) typeHTML(callout, steps[stage] || "");
     stepBtn.disabled = stage >= rows.length - 1;
   };
 
@@ -372,11 +387,12 @@ function demoPipeline(demoEl, project) {
     ydots.forEach((dt) => (dt.style.opacity = parseFloat(dt.dataset.fx) <= e + 1e-6 ? "1" : "0"));
   };
 
-  let running = false, raf = null;
-  const showDetail = (i, animate) => {
+  let running = false;
+  const showDetail = (i, animate, onDone) => {
     const txt = `0${Number(i) + 1} · ${d.stages[i].detail}`;
-    if (animate && !DEMO_REDUCE) typeHTML(detail, txt, 11);
-    else { if (detail._twRAF) { cancelAnimationFrame(detail._twRAF); detail._twRAF = null; } detail.textContent = txt; }
+    if (animate && !DEMO_REDUCE) return typeHTML(detail, txt, onDone);
+    if (detail._twRAF) { cancelAnimationFrame(detail._twRAF); detail._twRAF = null; }
+    detail.textContent = txt; if (onDone) onDone(); return 0;
   };
   stageEls.forEach((el) => {
     const i = el.dataset.i;
@@ -419,41 +435,46 @@ function demoPipeline(demoEl, project) {
     if (ychart) ychart.classList.add("is-run");
     drawChart(0);
     status.textContent = "scraping the portal, one date at a time…";
-    // linear per-stage dwell so each stage's detail stays readable (not eased — easing flashed the early stages by)
-    const N = stageEls.length, DWELL = 1800, TOTAL = N * DWELL, t0 = performance.now();
-    let lit = -1;
-    const tick = (t) => {
-      const elapsed = t - t0;
-      const p = Math.min(1, elapsed / TOTAL);
-      const e = 1 - Math.pow(1 - p, 1.6); // counter + bar + chart ease gently toward the end
-      setProgress(e);
-      drawChart(e);
-      const idx = Math.min(N - 1, Math.floor(elapsed / DWELL));
-      if (idx > lit) {
-        for (let k = lit + 1; k <= idx; k++) {
-          if (k > 0) {
-            stageEls[k - 1].classList.remove("is-hot");
-            stageEls[k - 1].classList.add("is-done");
-            if (connEls[k - 1]) connEls[k - 1].classList.add("is-done");
-          }
-          stageEls[k].classList.add("is-hot");
-          showDetail(k, true);
-        }
-        lit = idx;
-      }
-      if (elapsed < TOTAL) { raf = requestAnimationFrame(tick); return; }
-      stageEls[N - 1].classList.remove("is-hot");
-      stageEls[N - 1].classList.add("is-done");
-      if (connEls[N - 1]) connEls[N - 1].classList.add("is-done");
-      setProgress(1);
-      drawChart(1);
-      manifest.hidden = false;
-      status.textContent = "✓ 160,000+ observations · manifest verified";
-      if (toasts[0]) toasts[0].classList.add("is-show");
-      if (toasts[1]) setTimeout(() => toasts[1].classList.add("is-show"), 500);
-      running = false;
+    const N = stageEls.length, readHold = 750;
+
+    // ease the counter / bar / chart from a -> b over ms
+    const tween = (a, b, ms) => {
+      const t0 = performance.now();
+      const step = (now) => {
+        const p = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - p, 2);
+        const v = a + (b - a) * e;
+        setProgress(v); drawChart(v);
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
     };
-    raf = requestAnimationFrame(tick);
+
+    // the step copy dictates the pace: each stage advances only once its copy has typed
+    // (at the bio cadence) and a short read-hold passes. The whole run is as long as the
+    // copy needs — not forced into a fixed per-stage dwell.
+    let k = 0;
+    const runStage = () => {
+      stageEls.forEach((s) => s.classList.toggle("is-hot", Number(s.dataset.i) === k));
+      const dur = showDetail(k, true, () => {
+        setTimeout(() => {
+          stageEls[k].classList.remove("is-hot");
+          stageEls[k].classList.add("is-done");
+          if (connEls[k]) connEls[k].classList.add("is-done");
+          k++;
+          if (k < N) runStage();
+          else {
+            setProgress(1); drawChart(1);
+            manifest.hidden = false;
+            status.textContent = "✓ 160,000+ observations · manifest verified";
+            if (toasts[0]) toasts[0].classList.add("is-show");
+            if (toasts[1]) setTimeout(() => toasts[1].classList.add("is-show"), 500);
+            running = false;
+          }
+        }, readHold);
+      });
+      tween(k / N, (k + 1) / N, Math.max(500, dur)); // counter climbs while the copy types
+    };
+    runStage();
   };
   root.querySelector('[data-act="run"]').addEventListener("click", run);
 
