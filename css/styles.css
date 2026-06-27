@@ -21,7 +21,7 @@
   /* text */
   --text: #e9edf3;
   --text-dim: #9aa6b4;
-  --text-faint: #5f6b7a;
+  --text-faint: #818d9c;  /* lifted from #5f6b7a: micro-labels were ~3.8:1 on the dark bg, now ~6:1 (readable, still a tier below --text-dim) */
 
   /* warm -> cool accent axis (the thesis in color) */
   --warm: #f0532e;     /* globe — red end */
@@ -284,15 +284,15 @@ p { margin: 0; }
 
 .beat { margin-top: clamp(2rem, 4.5vh, 3rem); }
 .beat__label {
-  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--text-faint); margin-bottom: 0.9rem;
-  display: flex; align-items: center; gap: 0.6rem;
+  font-family: var(--mono); font-size: clamp(0.82rem, 2.6vw, 0.92rem); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.7rem;
 }
-.beat__label::before { content: ""; width: 14px; height: 2px; background: var(--accent); }
+.beat__label::before { content: ""; flex: none; width: 20px; height: 2px; background: var(--accent); }
 .beat__hd { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.9rem; }
 .beat__hd .beat__label { margin-bottom: 0; }
 .beat__replay {
-  flex: 0 0 auto; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.06em;
+  flex: 0 0 auto; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em;
   padding: 0.3rem 0.62rem; border-radius: 6px; cursor: pointer;
   border: 1px solid var(--line); color: var(--text-faint); background: transparent;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
@@ -719,8 +719,8 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
    regardless of the scroll-spy accent (About is not on the spectrum). */
 .about { border-top: 1px solid var(--line); padding-block: var(--section-y); }
 .about__inner { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); }
-.about__label { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); display: flex; align-items: center; gap: 0.6rem; margin-bottom: 2rem; }
-.about__label::before { content: ""; width: 16px; height: 2px; background: var(--warm-2); }
+.about__label { font-family: var(--mono); font-size: clamp(0.86rem, 2.8vw, 0.98rem); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 2rem; }
+.about__label::before { content: ""; flex: none; width: 22px; height: 2px; background: var(--warm-2); }
 .about__top { display: grid; grid-template-columns: 200px 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
 
 .idplate__frame { position: relative; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-1); box-shadow: inset 0 0 40px color-mix(in srgb, var(--warm-2) 6%, transparent); }
@@ -733,7 +733,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 .idplate__photo { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 7px; filter: grayscale(0.25) contrast(1.03); }
 .idplate__id { font-family: var(--mono); margin-top: 0.8rem; }
 .idplate__name { font-size: 0.92rem; letter-spacing: 0.08em; color: var(--text); font-weight: 500; }
-.idplate__role { font-size: 0.68rem; letter-spacing: 0.05em; color: var(--text-faint); margin-top: 0.35rem; line-height: 1.5; }
+.idplate__role { font-size: 0.72rem; letter-spacing: 0.05em; color: var(--text-faint); margin-top: 0.35rem; line-height: 1.5; }
 
 /* the unique signature graphic, beside the headshot */
 .flowsig__svg { width: 100%; height: auto; overflow: visible; display: block; }
@@ -843,7 +843,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
   .cards { grid-template-columns: 1fr; }
   .utilnav { gap: 1rem; }
   .spectrum__label { font-size: 0.62rem; max-width: 40%; }
-  .node__label { font-size: 0.68rem; }
+  .node__label { font-size: 0.72rem; }
   .node__preview { display: none; } /* hover tooltip is useless on touch + overflows the viewport edge */
   .topbar__mark { display: none; }
   /* the flowsig SVG scales down on mobile; a modest bump keeps the labels legible without dominating */
@@ -851,7 +851,7 @@ ul.dt2__why li::before { content: ""; position: absolute; left: 0.15rem; top: 0.
 }
 
 @media (max-width: 460px) {
-  .node__label { font-size: 0.6rem; }
+  .node__label { font-size: 0.66rem; }
   .spectrum__track { height: 56px; }
 }
 

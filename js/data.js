@@ -8,7 +8,7 @@ const SITE = {
   name: "Loong Bong",
   tagline: {
     lead: "Same tools, very different rigour.",
-    sub: "I direct AI to build things, and match the rigour to the stakes. Five projects below, from vibe-coded to rigorously engineered.",
+    sub: "Five projects below, from vibe-coded to rigorously engineered.",
   },
   about:
     'Hi, I\'m Loong. I trained as a chemical engineer, and a scientific theory I came up with as an undergrad ' +
